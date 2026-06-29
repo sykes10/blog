@@ -1,7 +1,7 @@
-# Requirements: Frontend Engineering Blog
+# Requirements: Frontend Blueprints
 
 **Defined:** 2026-06-29
-**Core Value:** Each post must teach a frontend engineering concept thoroughly enough that a hiring manager understands how the author thinks, and a frontend engineer leaves with usable knowledge.
+**Core Value:** Every Blueprint or Pattern must give the reader a production-grade mental model — covering the "why" and trade-offs as much as the "how" — for a hiring manager to understand how the author thinks, or an engineer to use as a reference.
 
 ## v1 Requirements
 
@@ -12,24 +12,24 @@
 - [ ] **FOUND-03**: Site supports light/dark mode without a flash of the wrong theme on load
 - [ ] **FOUND-04**: Site has responsive, readable typography across mobile/tablet/desktop
 
-### Building Blocks
+### Patterns
 
-- [ ] **BLOCK-01**: User can read a Building Blocks post following a consistent template: behavior → accessibility → scalability/design-system readiness → code
-- [ ] **BLOCK-02**: User can view a live, interactive demo of the real component embedded in a Building Blocks post, when the author chooses to include one
-- [ ] **BLOCK-03**: User can view static code snippets with optional screenshots in a Building Blocks post, when a live demo isn't included
-- [ ] **BLOCK-04**: User can browse Building Blocks posts by tag/category (e.g. "Buttons", "Forms", "Navigation")
+- [ ] **PATT-01**: User can read a Pattern article following a consistent template: the problem it solves → when to use / when not to use → trade-offs → common mistakes → accessibility considerations → performance implications → edge cases → implementation considerations
+- [ ] **PATT-02**: User can view a live, interactive demo of the real implementation embedded in a Pattern article, when the author chooses to include one
+- [ ] **PATT-03**: User can view static code snippets with optional screenshots in a Pattern article, when a live demo isn't included
+- [ ] **PATT-04**: User can browse Pattern articles by category (Components, Behaviours, Engineering, UX) and by tag
 
 ### Cross-Linking
 
-- [ ] **LINK-01**: Author can declare related posts in frontmatter linking an Anatomy of X post to the Building Blocks post(s) it builds on
-- [ ] **LINK-02**: Build fails if a related-post reference points to a slug that doesn't exist (prevents silent link rot)
-- [ ] **LINK-03**: User can navigate from an Anatomy of X post to the Building Blocks posts it references, with related posts surfaced inline
+- [ ] **LINK-01**: Author can declare related Patterns in a Blueprint's frontmatter, and related Blueprints in a Pattern's frontmatter (many-to-many)
+- [ ] **LINK-02**: Build fails if a related-content reference points to a slug that doesn't exist (prevents silent link rot)
+- [ ] **LINK-03**: User can navigate from a Blueprint to the Patterns it's composed of, and from a Pattern to the Blueprints that reference it, with related content surfaced inline
 
-### Anatomy of X
+### Blueprints
 
-- [ ] **ANAT-01**: User can read an Anatomy of X post that breaks down the architecture of a complex feature (e.g. booking system, LLM chat UI)
-- [ ] **ANAT-02**: Anatomy of X post includes a working demo of the feature when feasible; ships architecture-only when a demo is impractical for v1
-- [ ] **ANAT-03**: User can browse Anatomy of X posts separately from Building Blocks posts
+- [ ] **BLUE-01**: User can read a Blueprint article that answers "how would you design and build this feature for production?" for a complete frontend feature (e.g. LLM chat, search, authentication, checkout), drawing on whichever perspectives are relevant (user goals, journeys, UI anatomy, state/data model, interactions, edge cases, a11y, performance, security, analytics, architecture, testing strategy) — depth chosen per feature, not every perspective mandatory for every post
+- [ ] **BLUE-02**: Blueprint article includes a working demo of the feature when feasible; ships as architecture-only when a demo is impractical for v1
+- [ ] **BLUE-03**: User can browse Blueprint articles separately from Patterns
 
 ### Site & Discovery
 
@@ -51,9 +51,9 @@ Deferred to future release. Tracked but not in current roadmap.
 - **ENGG-01**: Newsletter signup
 - **ENGG-02**: Comments on posts
 
-### Anatomy of X
+### Blueprints
 
-- **ANAT-04**: Sandpack-based runnable, multi-file demos for Anatomy of X features too complex for the standard component-registry demo pattern
+- **BLUE-04**: Sandpack-based runnable, multi-file demos for Blueprint features too complex for the standard component-registry demo pattern
 
 ## Out of Scope
 
@@ -65,7 +65,8 @@ Explicitly excluded. Documented to prevent scope creep.
 | Comments | Too early at "a handful of posts" scale; adds moderation overhead with no clear payoff yet |
 | Newsletter | Not part of core value; revisit only if audience/post count grows |
 | Multi-author support | Single author by design |
-| Full-text search (v1) | Unnecessary at launch scale; tags/categories cover discovery until post count grows substantially |
+| Full-text search (v1) | Unnecessary at launch scale; categories/tags cover discovery until post count grows substantially |
+| Framework-specific tutorials | Content stays timeless and valuable regardless of framework/technology churn — a guiding principle, not just a v1 deferral |
 
 ## Traceability
 
@@ -77,16 +78,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FOUND-02 | TBD | Pending |
 | FOUND-03 | TBD | Pending |
 | FOUND-04 | TBD | Pending |
-| BLOCK-01 | TBD | Pending |
-| BLOCK-02 | TBD | Pending |
-| BLOCK-03 | TBD | Pending |
-| BLOCK-04 | TBD | Pending |
+| PATT-01 | TBD | Pending |
+| PATT-02 | TBD | Pending |
+| PATT-03 | TBD | Pending |
+| PATT-04 | TBD | Pending |
 | LINK-01 | TBD | Pending |
 | LINK-02 | TBD | Pending |
 | LINK-03 | TBD | Pending |
-| ANAT-01 | TBD | Pending |
-| ANAT-02 | TBD | Pending |
-| ANAT-03 | TBD | Pending |
+| BLUE-01 | TBD | Pending |
+| BLUE-02 | TBD | Pending |
+| BLUE-03 | TBD | Pending |
 | SITE-01 | TBD | Pending |
 | SITE-02 | TBD | Pending |
 | SITE-03 | TBD | Pending |
@@ -95,8 +96,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 **Coverage:**
 - v1 requirements: 18 total
 - Mapped to phases: 0
-- Unmapped: 18 ⚠️ (roadmap creation will fill this in)
+- Unmapped: 18 ⚠️ (roadmap revision will fill this in)
 
 ---
 *Requirements defined: 2026-06-29*
-*Last updated: 2026-06-29 after initial definition*
+*Last updated: 2026-06-29 after content-strategy revision (Building Blocks → Patterns, Anatomy of X → Blueprints)*
