@@ -74,30 +74,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | TBD | Pending |
-| FOUND-02 | TBD | Pending |
-| FOUND-03 | TBD | Pending |
-| FOUND-04 | TBD | Pending |
-| PATT-01 | TBD | Pending |
-| PATT-02 | TBD | Pending |
-| PATT-03 | TBD | Pending |
-| PATT-04 | TBD | Pending |
-| LINK-01 | TBD | Pending |
-| LINK-02 | TBD | Pending |
-| LINK-03 | TBD | Pending |
-| BLUE-01 | TBD | Pending |
-| BLUE-02 | TBD | Pending |
-| BLUE-03 | TBD | Pending |
-| SITE-01 | TBD | Pending |
-| SITE-02 | TBD | Pending |
-| SITE-03 | TBD | Pending |
-| SITE-04 | TBD | Pending |
+| FOUND-01 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Pending |
+| FOUND-03 | Phase 1 | Pending |
+| FOUND-04 | Phase 1 | Pending |
+| PATT-01 | Phase 1 | Pending |
+| PATT-03 | Phase 1 | Pending |
+| SITE-01 | Phase 1 | Pending |
+| SITE-02 | Phase 1 | Pending |
+| SITE-03 | Phase 1 | Pending |
+| PATT-02 | Phase 2 | Pending |
+| PATT-04 | Phase 2 | Pending |
+| SITE-04 | Phase 2 | Pending |
+| LINK-01 | Phase 3 | Pending |
+| LINK-02 | Phase 3 | Pending |
+| LINK-03 | Phase 3 | Pending |
+| BLUE-01 | Phase 4 | Pending |
+| BLUE-02 | Phase 4 | Pending |
+| BLUE-03 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️ (roadmap revision will fill this in)
+- Mapped to phases: 18
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-06-29*
-*Last updated: 2026-06-29 after content-strategy revision (Building Blocks → Patterns, Anatomy of X → Blueprints)*
+*Last updated: 2026-06-29 after roadmap revision (Building Blocks → Patterns, Anatomy of X → Blueprints; requirement IDs and phase mappings updated, 18/18 v1 requirements mapped)*
