@@ -5,14 +5,12 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
-import { transformerCopyButton } from "@rehype-pretty/transformers";
 import { getAllPatterns, getPatternBySlug } from "@/lib/content";
 import { getMDXComponents } from "@/lib/mdx-components";
 
 // MDX plugin chain: remark-gfm → rehype-slug → rehype-autolink-headings → rehype-pretty-code+Shiki
 // rehype-slug MUST come before rehype-autolink-headings (autolink depends on slug's id attrs).
 // rehype-pretty-code runs last so it transforms <pre><code> after all other rehype passes.
-// @rehype-pretty/transformers copy-button: a Shiki transformer — zero hand-rolled client JS.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const MDX_OPTIONS: Record<string, any> = {
   remarkPlugins: [remarkGfm],
@@ -23,19 +21,11 @@ const MDX_OPTIONS: Record<string, any> = {
       rehypePrettyCode,
       {
         // Paired light/dark Shiki themes — respects the active Tailwind dark class.
-        // Uses the CSS variables approach: rehype-pretty-code sets data-theme attrs;
         // globals.css targets [data-theme="light"] / [data-theme="dark"] for code blocks.
         themes: {
           light: "github-light",
           dark: "github-dark",
         },
-        // Copy-button via transformer — avoids a hand-rolled "use client" wrapper per PATT-03.
-        transformers: [
-          transformerCopyButton({
-            visibility: "hover",
-            feedbackDuration: 2000,
-          }),
-        ],
       },
     ],
   ],
