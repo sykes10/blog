@@ -4,6 +4,9 @@ import readingTime from "reading-time";
 // Pattern collection: focused explorations of a single reusable concept
 // (component, behaviour, or engineering technique).
 // No demoComponents field — live demo registry is Phase 2 scope (D-06/PATT-03).
+//
+// body uses s.mdx() for pre-compiled MDX output; raw provides the plain text
+// for reading-time computation. The rendering component handles the compiled output.
 const patterns = defineCollection({
   name: "Pattern",
   pattern: "patterns/**/*.mdx",
@@ -15,8 +18,11 @@ const patterns = defineCollection({
       category: s.enum(["components", "behaviours", "engineering", "ux"]),
       tags: s.array(s.string()).default([]),
       publishedAt: s.isodate(),
-      body: s.mdx(), // compiled MDX body
-      raw: s.raw(), // raw text for reading-time computation
+      // raw: raw MDX text — used for reading-time computation AND as the source
+      // passed to next-mdx-remote/rsc's <MDXRemote> for server-side compilation.
+      // Using raw MDX + MDXRemote (rather than s.mdx() compiled output) avoids
+      // the SSR Function() evaluation issue with Velite's pre-compiled format.
+      raw: s.raw(),
     })
     .transform((data) => ({
       ...data,
