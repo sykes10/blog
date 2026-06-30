@@ -26,35 +26,230 @@ A well-designed toast system is a small state machine with a clear API contract,
 
 - Confirming user-initiated actions that succeed asynchronously (file save, form submit, item added to cart)
 - Non-critical error feedback where the user can retry or continue (network blip, optimistic update failure)
-- System events the user should know about but does not need to act on immediately
+- System events the user should know about but does not need to act on immediately (background sync complete, session about to expire)
+- Undoable actions where the notification itself contains a recovery action ("Item deleted — Undo")
 
 **Avoid toasts for:**
 
 - **Errors that block the task**: If the form cannot be submitted because of validation errors, the toast is gone before the user fixes the problem. Put the error inline.
-- **Confirmation of destructive actions**: "Are you sure?" should be a modal, not a toast.
-- **Long-lived status**: A toast that lingers to show "processing…" and then "done" is fighting its own nature. Use a progress indicator for operations that take more than a second.
+- **Confirmation of destructive actions**: "Are you sure?" should be a modal, not a toast. By the time the user reads the toast, the action has already happened.
+- **Long-lived status**: A toast that lingers to show "processing…" and then "done" is fighting its own nature. Use a progress indicator or inline status for operations that take more than a second.
+- **Critical, must-read alerts**: If missing the message has real consequences (authentication expiry, unsaved data warning), a modal or banner that requires dismissal is appropriate. Toasts are for fire-and-forget feedback, not for information users must act on.
 
-## A Minimal Production Implementation
+<Callout type="tip" title="The accessibility test">
+If you would feel comfortable with the toast disappearing before an unhurried reader finishes it, you are using the right component. If you are anxious that they might miss it, it belongs in a more persistent UI element.
+</Callout>
 
-The core of a toast system is a queue and a scheduler, not just a CSS class toggle. Here is a TypeScript interface that captures the contract:
+## Trade-offs
+
+| Approach | Pro | Con | When to Prefer |
+|----------|-----|-----|----------------|
+| **Single toast (replace-on-new)** | Never clutters the viewport; clear and unambiguous | New toasts drop context from previous ones; rapid actions feel unresponsive | Low-frequency, long-duration actions (file save, upload complete) |
+| **Stacked queue (FIFO, max N visible)** | Every action is acknowledged; useful for batch operations | Screen readers announce each entry; visual clutter accumulates under rapid fire | Batch operations, shopping carts, multi-select actions |
+| **Collapsed counter ("2 notifications")** | Scales to unlimited events without viewport pollution | Requires a secondary panel for detail; increases interaction cost | High-frequency event streams (CI runs, chat messages) |
+| **Auto-dismiss with pause-on-hover** | Respects the user's reading pace; clears automatically | Hover is unavailable on touch devices; users who tab away miss the pause | Desktop-primary apps with variable content length |
+| **Persistent until dismissed** | Guarantees the user sees the message | Accumulates if the user ignores; higher interaction cost | Critical errors, undo confirmations, messages with required actions |
+
+The right queue strategy is determined by your answer to two questions: *How often will toasts fire?* and *What is the consequence of missing one?* For most applications, a FIFO queue with a cap of three visible toasts, auto-dismiss with pause-on-hover, and a "dismiss all" affordance is a reasonable default.
+
+## Common Mistakes
+
+**Hardcoding the auto-dismiss timeout.** A fixed 3-second timer works for "File saved" but cuts off "There was a problem connecting to the server. Please check your network and try again." The dismiss timer should scale with the content length — a common formula is `Math.max(minDuration, wordsInMessage / 3 * 1000)` (three words per second is roughly the reading rate for casual users).
+
+**Triggering toasts synchronously in a user event handler.** If you call `addToast()` inside a React `onClick`, the toast fires on every click, including double-clicks. The call should be in the async operation's callback (`.then()`, `await` continuation, or mutation `onSuccess`), not the click handler itself.
+
+**Forgetting touch and keyboard users for pause-on-hover.** The pause-on-hover pattern only works for pointer devices. Touch users who cannot hover will have no way to extend the reading window. The canonical fix is to also pause on focus (so keyboard users can tab to the toast) and to respect `prefers-reduced-motion` by keeping toasts visible longer when animations are reduced.
+
+**Using `role="alert"` for every toast.** `role="alert"` is equivalent to `aria-live="assertive"` — it interrupts any ongoing screen-reader announcement immediately. This is the right choice for errors (the user needs to know now), but success or info toasts should use `role="status"` (equivalent to `aria-live="polite"`), which waits for the reader to finish its current sentence. Using `alert` everywhere creates a hostile experience for screen-reader users.
+
+**Storing dismiss state in the toasts themselves.** If your toast includes an "Undo" action, the undo state should live in the parent feature, not the toast. The toast is a notification vehicle; the undo callback is business logic. When the toast auto-dismisses and the user has not acted, the undo window should close gracefully — not leave an orphaned callback.
+
+## Accessibility Considerations
+
+The ARIA live region model is the foundation of accessible toasts. The region must exist in the DOM before any toasts are added to it — screen readers register live regions at parse time, not at mutation time. Creating the container dynamically (rendering it only when the first toast fires) causes screen readers to miss the first announcement.
+
+```html
+<!-- The live region container must exist in the DOM at page load,
+     even when there are no toasts to show. -->
+<div
+  id="toast-region"
+  aria-live="polite"
+  aria-atomic="false"
+  aria-relevant="additions text"
+  class="toast-region"
+>
+  <!-- Toast items are inserted here dynamically -->
+</div>
+```
+
+`aria-atomic="false"` is important: it tells the screen reader to announce only the newly added content (the new toast), not the entire region (which would re-read all visible toasts every time one is added). `aria-relevant="additions text"` restricts announcements to new content only, suppressing announcements when a toast is removed.
+
+For error toasts, upgrade the live region role to `assertive`:
 
 ```tsx
-// The minimal interface for a toast entry in the queue
-interface Toast {
-  id: string;
-  message: string;
-  type: "success" | "error" | "info" | "warning";
-  duration?: number; // ms; undefined means the toast persists until dismissed
-}
+type LiveRegionPolicy = "polite" | "assertive";
 
-// The hook API — consume this in any component that needs to trigger toasts
-interface UseToast {
-  toasts: Toast[];
-  addToast: (toast: Omit<Toast, "id">) => void;
-  removeToast: (id: string) => void;
-  pauseAll: () => void;
-  resumeAll: () => void;
+function toastToAriaPolicy(type: ToastType): LiveRegionPolicy {
+  // assertive interrupts the screen reader immediately — use only for errors.
+  // polite waits for a natural break — appropriate for success/info/warning.
+  return type === "error" ? "assertive" : "polite";
 }
 ```
 
-The `pauseAll` / `resumeAll` interface deserves attention. Pause-on-hover is not a nice-to-have — it is a WCAG 2.1 criterion (2.2.3, No Timing, AAA; more practically, 2.2.2, Pause, Stop, Hide, AA) for any content that auto-updates. A user hovering over a toast to read it should not have it disappear mid-sentence.
+WCAG 2.1 Success Criterion 2.2.2 (Pause, Stop, Hide — Level AA) requires that moving or auto-updating content can be paused, stopped, or hidden by the user. Auto-dismissing toasts are covered by this criterion. The correct approach:
+
+1. Pause the timer on `:hover` and `:focus-within` (pointer and keyboard users)
+2. Respect `prefers-reduced-motion` — when the user has requested reduced motion, either keep toasts persistent or extend the timeout significantly rather than removing the animation
+3. Provide a manual dismiss button on every toast (accessible label: "Dismiss notification")
+
+```css
+/* Honour reduced motion: no slide-in animation, extended persistence */
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+    /* Keep visible longer so users with motion sensitivity don't miss toasts */
+    --toast-duration: 8000ms;
+  }
+}
+```
+
+## Performance Implications
+
+**React re-renders on every timer tick.** If you use `setInterval` to update a countdown display inside a toast, you are re-rendering the entire toast tree every second. The timer state should stay outside React — use a `ref` to track the timer handle and only call state updates (`addToast` / `removeToast`) when the state actually changes (a toast is added or removed). Displaying elapsed time or a progress bar in a toast is almost always not worth the re-render cost; prefer CSS animations driven by the same timeout.
+
+```tsx
+// Prefer CSS animation over JS interval for the dismiss timer UI
+.toast-progress {
+  height: 2px;
+  background: currentColor;
+  transform-origin: left;
+  animation: shrink var(--toast-duration, 5000ms) linear forwards;
+}
+
+@keyframes shrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+```
+
+The animation is paused via CSS when the toast is hovered, with no JavaScript timer management required:
+
+```css
+.toast:hover .toast-progress,
+.toast:focus-within .toast-progress {
+  animation-play-state: paused;
+}
+```
+
+**Batching rapid-fire toasts.** In a React 18+ application, multiple `addToast` calls within the same event handler are batched automatically by React's concurrent mode. But calls that arrive asynchronously (from separate `Promise.then()` callbacks) are not batched. If your use case fires many toasts in quick succession (e.g., multiple uploads completing within the same second), debounce or collapse them at the API layer before they reach the queue — `10 uploads complete` is more useful than 10 individual toasts.
+
+## Edge Cases
+
+**The user navigates away while a toast is animating.** If you use a page-level toast store (Context, Zustand, Jotai), toasts survive navigation in single-page apps. This is usually correct for success toasts (confirming the action that caused the navigation) but incorrect for error toasts (which describe a problem on the page the user just left). Add a navigation listener that flushes error and warning toasts on route change.
+
+**Multiple tabs.** A background tab that completes an async operation will fire a toast that the user never sees (the tab is not focused). If the operation is important enough to surface, use the Notifications API (with appropriate permission handling) rather than a toast. Toasts are for the current viewport only.
+
+**The toast fires during a modal or full-screen overlay.** A toast rendered at the document root with a fixed position will appear *under* a modal backdrop if the modal uses a higher `z-index`. The toast region's `z-index` should be above your application's highest-stacking overlay, or the toast should be rendered inside the modal when the triggering action occurs inside it.
+
+**Very long toast messages.** Toasts are not designed for multi-line content. If a message requires more than two lines, it should be an inline alert or a dialog, not a toast. Enforce this with a character or word limit at the API level (`description.slice(0, 120)`), and make the constraint explicit in your design system documentation.
+
+**RTL layouts.** Toast positioning (bottom-right is the convention in LTR) should mirror to bottom-left in RTL contexts. Use CSS logical properties:
+
+```css
+.toast-region {
+  /* Logical properties: inline-end = right in LTR, left in RTL */
+  inset-inline-end: 1rem;
+  inset-block-end: 1rem;
+}
+```
+
+## Implementation Considerations
+
+The core of a toast system is a queue and a scheduler, not just a CSS class toggle. Here is a TypeScript interface that captures the contract:
+
+```typescript
+type ToastType = "success" | "error" | "info" | "warning";
+
+interface Toast {
+  id: string;
+  message: string;
+  type: ToastType;
+  /** Duration in ms. undefined = persists until manually dismissed. */
+  duration?: number;
+  /** Optional action (e.g. "Undo"). Storing the callback here keeps
+   *  it co-located with the message; the caller is responsible for
+   *  any side effects (state rollback, API call). */
+  action?: { label: string; onClick: () => void };
+}
+
+interface ToastStore {
+  toasts: Toast[];
+  add: (toast: Omit<Toast, "id">) => string; // returns the generated id
+  remove: (id: string) => void;
+  pauseAll: () => void;  // called on hover/focus-within
+  resumeAll: () => void; // called on mouse leave / blur
+}
+```
+
+A minimal React implementation using `useReducer` keeps the state logic co-located and testable:
+
+```tsx
+type ToastAction =
+  | { type: "ADD"; toast: Toast }
+  | { type: "REMOVE"; id: string };
+
+function toastReducer(state: Toast[], action: ToastAction): Toast[] {
+  switch (action.type) {
+    case "ADD":
+      // Cap the visible queue at 3. Older toasts drop off the bottom.
+      return [...state, action.toast].slice(-3);
+    case "REMOVE":
+      return state.filter((t) => t.id !== action.id);
+    default:
+      return state;
+  }
+}
+```
+
+The timer is managed outside the reducer, via a `useEffect` that schedules a `removeToast` call after `duration` milliseconds. The pause/resume API is implemented by storing the remaining time in a `ref` when the user hovers, and restarting the timer with the residual value when they leave:
+
+```tsx
+function useToastTimer(toast: Toast, remove: (id: string) => void) {
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const remainingRef = useRef(toast.duration ?? 0);
+  const startedAtRef = useRef<number>(Date.now());
+
+  function start(duration: number) {
+    startedAtRef.current = Date.now();
+    timerRef.current = setTimeout(() => remove(toast.id), duration);
+  }
+
+  function pause() {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      // Capture remaining time so resume can pick up where the timer left off
+      remainingRef.current -= Date.now() - startedAtRef.current;
+    }
+  }
+
+  function resume() {
+    if (remainingRef.current > 0) {
+      start(remainingRef.current);
+    }
+  }
+
+  useEffect(() => {
+    if (toast.duration) start(toast.duration);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast.id]);
+
+  return { pause, resume };
+}
+```
+
+<Callout type="note" title="On using a library">
+For production applications, [Sonner](https://sonner.emilkowal.ski/) by Emil Kowalski is the current gold-standard implementation — it handles queue management, accessibility, and gesture-based swipe-to-dismiss out of the box. Build your own only when you have specific constraints (bundle size budget, design system integration, framework limitations) that Sonner cannot accommodate. The implementation above is instructive, not prescriptive.
+</Callout>
