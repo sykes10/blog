@@ -1,0 +1,47 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Accent color: a deep violet — distinctive without being generic */
+  --color-accent: oklch(0.55 0.22 280);
+  --color-accent-light: oklch(0.72 0.18 280);
+
+  /* Display font: Inter for headings — clean and professional */
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+/* Base theme tokens mapped to semantic names */
+:root {
+  --background: #ffffff;
+  --foreground: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --surface: #f9fafb;
+}
+
+.dark {
+  --background: #0f1117;
+  --foreground: #f1f5f9;
+  --muted: #94a3b8;
+  --border: #1e2937;
+  --surface: #161b27;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prose customizations for dark mode */
+.prose {
+  --tw-prose-links: var(--color-accent);
+}
+
+.dark .prose {
+  --tw-prose-links: var(--color-accent-light);
+}

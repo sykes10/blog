@@ -1,0 +1,60 @@
+---
+title: "Toast Notification System"
+slug: "toast-notification-system"
+description: "How to design and implement a production-grade toast notification system with queue management, ARIA live regions, and pause-on-hover."
+category: components
+tags: ["notifications", "accessibility", "state-management", "ux"]
+publishedAt: "2026-06-30"
+---
+
+## The Problem Toast Solves
+
+Most applications need a way to communicate transient, non-blocking feedback to users — "File saved", "Error connecting to server", "3 items added to cart". The challenge is that this feedback needs to exist outside the normal document flow. You cannot put a success message next to the button that triggered it if that button is in a modal that has since closed, or if the result came from a background process the user didn't initiate.
+
+Toast notifications solve this by maintaining a separate rendering layer at a fixed viewport position. But the simplicity of "a little box that appears and disappears" conceals a surprising amount of production complexity:
+
+- **Queue management**: What happens when the user triggers 10 toasts in rapid succession? Naively appending all of them produces an unusable stack.
+- **Accessibility**: Toasts are useless if they are invisible to screen readers, but overly aggressive ARIA announcements create noise for users who rely on them.
+- **Auto-dismiss timing**: Fixed timeouts fail users who read slowly, are interrupted, or are on mobile where they can't hover to pause.
+- **Stacking and positioning**: The right layout behaviour under accumulation is not obvious — it depends on your UX goals and content density.
+
+A well-designed toast system is a small state machine with a clear API contract, not just a CSS animation with a `setTimeout`.
+
+## When to Use (and When Not To)
+
+**Use toasts for:**
+
+- Confirming user-initiated actions that succeed asynchronously (file save, form submit, item added to cart)
+- Non-critical error feedback where the user can retry or continue (network blip, optimistic update failure)
+- System events the user should know about but does not need to act on immediately
+
+**Avoid toasts for:**
+
+- **Errors that block the task**: If the form cannot be submitted because of validation errors, the toast is gone before the user fixes the problem. Put the error inline.
+- **Confirmation of destructive actions**: "Are you sure?" should be a modal, not a toast.
+- **Long-lived status**: A toast that lingers to show "processing…" and then "done" is fighting its own nature. Use a progress indicator for operations that take more than a second.
+
+## A Minimal Production Implementation
+
+The core of a toast system is a queue and a scheduler, not just a CSS class toggle. Here is a TypeScript interface that captures the contract:
+
+```tsx
+// The minimal interface for a toast entry in the queue
+interface Toast {
+  id: string;
+  message: string;
+  type: "success" | "error" | "info" | "warning";
+  duration?: number; // ms; undefined means the toast persists until dismissed
+}
+
+// The hook API — consume this in any component that needs to trigger toasts
+interface UseToast {
+  toasts: Toast[];
+  addToast: (toast: Omit<Toast, "id">) => void;
+  removeToast: (id: string) => void;
+  pauseAll: () => void;
+  resumeAll: () => void;
+}
+```
+
+The `pauseAll` / `resumeAll` interface deserves attention. Pause-on-hover is not a nice-to-have — it is a WCAG 2.1 criterion (2.2.3, No Timing, AAA; more practically, 2.2.2, Pause, Stop, Hide, AA) for any content that auto-updates. A user hovering over a toast to read it should not have it disappear mid-sentence.
