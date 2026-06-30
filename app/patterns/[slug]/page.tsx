@@ -1,8 +1,45 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypePrettyCode from "rehype-pretty-code";
+import { transformerCopyButton } from "@rehype-pretty/transformers";
 import { getAllPatterns, getPatternBySlug } from "@/lib/content";
 import { getMDXComponents } from "@/lib/mdx-components";
+
+// MDX plugin chain: remark-gfm → rehype-slug → rehype-autolink-headings → rehype-pretty-code+Shiki
+// rehype-slug MUST come before rehype-autolink-headings (autolink depends on slug's id attrs).
+// rehype-pretty-code runs last so it transforms <pre><code> after all other rehype passes.
+// @rehype-pretty/transformers copy-button: a Shiki transformer — zero hand-rolled client JS.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MDX_OPTIONS: Record<string, any> = {
+  remarkPlugins: [remarkGfm],
+  rehypePlugins: [
+    rehypeSlug,
+    [rehypeAutolinkHeadings, { behavior: "wrap" }],
+    [
+      rehypePrettyCode,
+      {
+        // Paired light/dark Shiki themes — respects the active Tailwind dark class.
+        // Uses the CSS variables approach: rehype-pretty-code sets data-theme attrs;
+        // globals.css targets [data-theme="light"] / [data-theme="dark"] for code blocks.
+        themes: {
+          light: "github-light",
+          dark: "github-dark",
+        },
+        // Copy-button via transformer — avoids a hand-rolled "use client" wrapper per PATT-03.
+        transformers: [
+          transformerCopyButton({
+            visibility: "hover",
+            feedbackDuration: 2000,
+          }),
+        ],
+      },
+    ],
+  ],
+};
 
 // generateStaticParams enumerates all pattern slugs so Next.js can
 // statically generate each pattern route at build time.
@@ -11,9 +48,11 @@ export async function generateStaticParams() {
   return patterns.map((p) => ({ slug: p.slug }));
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
+
 // generateMetadata provides per-route SEO metadata.
-// Plan 02 will extend this with full OG image, JSON-LD, and canonical URL;
-// the structure here is intentionally left open for that extension.
+// D-08: domain source is NEXT_PUBLIC_SITE_URL env var, never hardcoded in multiple places.
+// D-07: site name is "Frontend Blueprints".
 export async function generateMetadata({
   params,
 }: {
@@ -23,17 +62,20 @@ export async function generateMetadata({
   const post = getPatternBySlug(slug);
   if (!post) return {};
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
-
   return {
+    metadataBase: new URL(SITE_URL),
     title: post.title,
     description: post.description,
+    alternates: {
+      canonical: `/patterns/${post.slug}`,
+    },
     openGraph: {
       title: post.title,
       description: post.description,
       type: "article",
       publishedTime: post.publishedAt,
-      url: `${siteUrl}/patterns/${post.slug}`,
+      url: `${SITE_URL}/patterns/${post.slug}`,
+      siteName: "Frontend Blueprints",
     },
   };
 }
@@ -51,7 +93,9 @@ export default async function PatternPage({
     notFound();
   }
 
-  // JSON-LD Article schema — per D-09, author name is "Alejandro Arevalo"
+  // JSON-LD Article schema — per D-09, author name is "Alejandro Arevalo" (not git handle sykes10).
+  // dangerouslySetInnerHTML is safe here: data is author-controlled frontmatter known at build time,
+  // not user input. JSON.stringify serializes all special characters. (T-01-03 threat accepted.)
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -62,16 +106,16 @@ export default async function PatternPage({
       name: "Alejandro Arevalo",
     },
     datePublished: post.publishedAt,
+    url: `${SITE_URL}/patterns/${post.slug}`,
   };
 
-  // MDX component map — defined here and passed to MDXRemote since both live
-  // in a Server Component context (no client/server boundary crossing).
+  // MDX component map — defined in lib/mdx-components.tsx and passed to MDXRemote.
+  // Both live in a Server Component context; no client/server boundary is crossed.
   const mdxComponents = getMDXComponents();
 
   return (
     <>
-      {/* JSON-LD is injected server-side; no user data is interpolated so
-          the dangerouslySetInnerHTML risk (XSS via untrusted HTML) does not apply. */}
+      {/* JSON-LD injected server-side; no user data interpolated (T-01-03 threat: accepted). */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -83,6 +127,7 @@ export default async function PatternPage({
             <span className="inline-flex items-center rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium capitalize text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
               {post.category}
             </span>
+            {/* SITE-03: reading time rendered from Velite-computed readingTime field */}
             <span className="text-xs text-(--muted)">{post.readingTime}</span>
           </div>
           <h1 className="text-3xl font-semibold tracking-tight text-(--foreground)">
@@ -103,11 +148,16 @@ export default async function PatternPage({
           )}
         </header>
 
-        {/* MDX body — prose and dark:prose-invert apply @tailwindcss/typography styles.
-            MDXRemote from next-mdx-remote/rsc compiles the raw MDX source server-side
-            as an async Server Component, shipping zero extra client JS for the post body. */}
+        {/* MDX body — prose dark:prose-invert applies @tailwindcss/typography styles.
+            MDXRemote from next-mdx-remote/rsc compiles raw MDX server-side as an async
+            Server Component, shipping zero extra client JS for the post body.
+            Plugin chain: remark-gfm → rehype-slug → rehype-autolink-headings → rehype-pretty-code */}
         <article className="prose dark:prose-invert max-w-none">
-          <MDXRemote source={post.raw} components={mdxComponents} />
+          <MDXRemote
+            source={post.raw}
+            options={{ mdxOptions: MDX_OPTIONS }}
+            components={mdxComponents}
+          />
         </article>
 
         <footer className="mt-12 border-t border-(--border) pt-8">

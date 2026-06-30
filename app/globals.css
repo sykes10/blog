@@ -45,3 +45,35 @@ body {
 .dark .prose {
   --tw-prose-links: var(--color-accent-light);
 }
+
+/* rehype-pretty-code light/dark theme pair support
+   When `themes: { light, dark }` is configured, rehype-pretty-code adds:
+   - data-theme="light" / data-theme="dark" on <pre> and <code> elements
+   - data-rehype-pretty-code-figure on the wrapping <figure>
+   We show only the theme matching the current Tailwind class. */
+[data-rehype-pretty-code-figure] code[data-theme="dark"],
+[data-rehype-pretty-code-figure] pre[data-theme="dark"] {
+  display: none;
+}
+
+.dark [data-rehype-pretty-code-figure] code[data-theme="light"],
+.dark [data-rehype-pretty-code-figure] pre[data-theme="light"] {
+  display: none;
+}
+
+.dark [data-rehype-pretty-code-figure] code[data-theme="dark"],
+.dark [data-rehype-pretty-code-figure] pre[data-theme="dark"] {
+  display: block;
+}
+
+/* rehype-pretty-code: remove default border on figure wrapper */
+[data-rehype-pretty-code-figure] {
+  margin: 1.5em 0;
+}
+
+/* Code block scroll — allow wide snippets to scroll horizontally */
+[data-rehype-pretty-code-figure] pre {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+}
