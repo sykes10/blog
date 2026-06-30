@@ -30,7 +30,15 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The post follows the consistent Pattern template (the problem it solves → when to use / when not to use → trade-offs → common mistakes → accessibility considerations → performance implications → edge cases → implementation considerations) with static code snippets and optional screenshots, since no live demo ships until Phase 2's registry exists
   4. The site respects light/dark mode with no flash of the wrong theme, and renders readable, responsive typography on mobile/tablet/desktop
   5. The post has correct SEO metadata (Open Graph, JSON-LD, title/description), a reading time estimate, and is included in a working RSS feed and sitemap
-**Plans**: TBD
+**Plans**: 3
+- Wave 1: [01-01](.planning/phases/01-foundation-first-pattern-post/01-01-PLAN.md) — Scaffold + Velite pipeline + MDX render + flash-free theming + Playwright smoke (FOUND-01, FOUND-03, FOUND-04)
+- Wave 2 *(blocked on Wave 1 completion, plans run in parallel)*:
+  - [01-02](.planning/phases/01-foundation-first-pattern-post/01-02-PLAN.md) — Full Shiki plugin chain + complete Toast Pattern post + SEO metadata + reading time (FOUND-02, PATT-01, PATT-03, SITE-01, SITE-03)
+  - [01-03](.planning/phases/01-foundation-first-pattern-post/01-03-PLAN.md) — RSS feed + sitemap + robots + automated feed smoke test (SITE-02)
+
+**Cross-cutting constraints:**
+- All post URLs derive from `NEXT_PUBLIC_SITE_URL` env var (single placeholder domain source, swappable without multi-file edits)
+- `npm run build` must pass after every task across all three plans
 
 ### Phase 2: Live Demos & Patterns Track
 **Goal**: A visitor can explore a small but real library of Pattern posts, browse them by category and tag, and interact with live demos where the author chose to include one
@@ -75,7 +83,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & First Pattern Post | 0/TBD | Not started | - |
+| 1. Foundation & First Pattern Post | 0/3 | Planned — ready to execute | - |
 | 2. Live Demos & Patterns Track | 0/TBD | Not started | - |
 | 3. Cross-Linking Infrastructure | 0/TBD | Not started | - |
 | 4. Blueprints Track | 0/TBD | Not started | - |

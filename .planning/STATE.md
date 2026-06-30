@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 1
 current_phase_name: Foundation & First Pattern Post
-status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-06-29T18:56:07.124Z"
+status: planned
+stopped_at: Phase 1 plans complete — 3 plans created (01-01, 01-02, 01-03)
+last_updated: "2026-06-30T00:00:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
+  total_plans: 3
   completed_plans: 0
   percent: 0
 ---
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-06-29 after content-strategy revision)
 ## Current Position
 
 Phase: 1 of 4 (Foundation & First Pattern Post)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
+Plan: 0 of 3 in current phase
+Status: Ready to execute
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -71,10 +71,11 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 1 planning must resolve the MDX rendering library choice (next-mdx-remote/rsc vs @next/mdx) flagged as an open disagreement in research/SUMMARY.md before locking the content pipeline architecture.
-- Phase 1 planning should verify the exact Shiki/rehype-pretty-code peer version range at install time rather than trusting latest tags.
+- ~~Phase 1 planning must resolve the MDX rendering library choice~~ — **Resolved (D-01):** `next-mdx-remote/rsc` v6 is the locked choice; plan 01-01 wires it with `<MDXRemote>` from the RSC entrypoint.
+- ~~Phase 1 planning should verify the Shiki/rehype-pretty-code peer version range~~ — **Resolved (D-03 + RESEARCH.md):** Shiki peer range is `^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0`; `shiki@latest` is safe, no explicit pin needed. Executor must verify against installed types at plan time.
 - Phase 2 should include a light research pass on manual accessibility verification workflow (keyboard + screen-reader) since automated-only scanning is flagged as insufficient for a11y-themed Pattern posts.
 - Phase 3 cross-linking schema must be designed as many-to-many from the start (a Blueprint references multiple Patterns; a Pattern can be referenced by multiple Blueprints) — not a one-directional Blueprint→Pattern reference.
+- **Watch item (next-mdx-remote):** Upstream repo archived 2026-04-09. v6.0.0 works today; re-confirm before any future Next.js major-version upgrade. Escape hatch: `next-mdx-remote-client` fork.
 
 ## Deferred Items
 
@@ -89,6 +90,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-29T18:56:07.117Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation-first-pattern-post/01-CONTEXT.md
+Last session: 2026-06-30
+Stopped at: Phase 1 plans complete — ready to execute
+Resume file: .planning/phases/01-foundation-first-pattern-post/01-01-PLAN.md
