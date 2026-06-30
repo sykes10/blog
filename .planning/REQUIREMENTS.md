@@ -7,16 +7,16 @@
 
 ### Foundation
 
-- [ ] **FOUND-01**: Site renders MDX content through a typed content layer (Velite or content-collections) as a statically-generated Next.js site
-- [ ] **FOUND-02**: Code blocks render with accurate syntax highlighting (Shiki/rehype-pretty-code) for TS/TSX/JS/HTML/CSS
-- [ ] **FOUND-03**: Site supports light/dark mode without a flash of the wrong theme on load
-- [ ] **FOUND-04**: Site has responsive, readable typography across mobile/tablet/desktop
+- [x] **FOUND-01**: Site renders MDX content through a typed content layer (Velite or content-collections) as a statically-generated Next.js site
+- [x] **FOUND-02**: Code blocks render with accurate syntax highlighting (Shiki/rehype-pretty-code) for TS/TSX/JS/HTML/CSS
+- [x] **FOUND-03**: Site supports light/dark mode without a flash of the wrong theme on load
+- [x] **FOUND-04**: Site has responsive, readable typography across mobile/tablet/desktop
 
 ### Patterns
 
-- [ ] **PATT-01**: User can read a Pattern article following a consistent template: the problem it solves → when to use / when not to use → trade-offs → common mistakes → accessibility considerations → performance implications → edge cases → implementation considerations
+- [x] **PATT-01**: User can read a Pattern article following a consistent template: the problem it solves → when to use / when not to use → trade-offs → common mistakes → accessibility considerations → performance implications → edge cases → implementation considerations
 - [ ] **PATT-02**: User can view a live, interactive demo of the real implementation embedded in a Pattern article, when the author chooses to include one
-- [ ] **PATT-03**: User can view static code snippets with optional screenshots in a Pattern article, when a live demo isn't included
+- [x] **PATT-03**: User can view static code snippets with optional screenshots in a Pattern article, when a live demo isn't included
 - [ ] **PATT-04**: User can browse Pattern articles by category (Components, Behaviours, Engineering, UX) and by tag
 
 ### Cross-Linking
@@ -33,9 +33,9 @@
 
 ### Site & Discovery
 
-- [ ] **SITE-01**: Each post has accurate SEO metadata (Open Graph tags, JSON-LD, page title/description)
-- [ ] **SITE-02**: Site exposes an RSS feed and sitemap
-- [ ] **SITE-03**: Each post displays estimated reading time
+- [x] **SITE-01**: Each post has accurate SEO metadata (Open Graph tags, JSON-LD, page title/description)
+- [x] **SITE-02**: Site exposes an RSS feed and sitemap
+- [x] **SITE-03**: Each post displays estimated reading time
 - [ ] **SITE-04**: Long posts have a table of contents with anchor links to headings
 
 ## v2 Requirements
@@ -74,15 +74,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 1 | Pending |
-| FOUND-02 | Phase 1 | Pending |
-| FOUND-03 | Phase 1 | Pending |
-| FOUND-04 | Phase 1 | Pending |
-| PATT-01 | Phase 1 | Pending |
-| PATT-03 | Phase 1 | Pending |
-| SITE-01 | Phase 1 | Pending |
-| SITE-02 | Phase 1 | Pending |
-| SITE-03 | Phase 1 | Pending |
+| FOUND-01 | Phase 1 | Complete |
+| FOUND-02 | Phase 1 | Complete |
+| FOUND-03 | Phase 1 | Complete |
+| FOUND-04 | Phase 1 | Complete |
+| PATT-01 | Phase 1 | Complete |
+| PATT-03 | Phase 1 | Complete |
+| SITE-01 | Phase 1 | Complete |
+| SITE-02 | Phase 1 | Complete |
+| SITE-03 | Phase 1 | Complete |
 | PATT-02 | Phase 2 | Pending |
 | PATT-04 | Phase 2 | Pending |
 | SITE-04 | Phase 2 | Pending |
@@ -94,6 +94,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BLUE-03 | Phase 4 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 18 total
 - Mapped to phases: 18
 - Unmapped: 0 ✓
