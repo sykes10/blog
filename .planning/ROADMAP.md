@@ -13,7 +13,7 @@ This roadmap takes the blog from an empty repo to a working, shareable portfolio
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & First Pattern Post** - Scaffold the Next.js/MDX pipeline and ship one complete, readable, SEO-correct Pattern post end-to-end
+- [x] **Phase 1: Foundation & First Pattern Post** - Scaffold the Next.js/MDX pipeline and ship one complete, readable, SEO-correct Pattern post end-to-end (completed 2026-06-30)
 - [ ] **Phase 2: Live Demos & Patterns Track** - Add the interactive demo registry and round out Patterns with browsing, tags, and TOC across multiple posts
 - [ ] **Phase 3: Cross-Linking Infrastructure** - Build the frontmatter-driven, build-validated, many-to-many linking system that ties Blueprints and Patterns together
 - [ ] **Phase 4: Blueprints Track** - Ship the production-design Blueprints track, cross-linked to the Patterns it's composed of, with demos where feasible
@@ -34,11 +34,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. The site respects light/dark mode with no flash of the wrong theme, and renders readable, responsive typography on mobile/tablet/desktop
   5. The post has correct SEO metadata (Open Graph, JSON-LD, title/description), a reading time estimate, and is included in a working RSS feed and sitemap
 
-**Plans**: 1/3 plans executed
+**Plans**: 3/3 plans complete
 
 - [x] 01-01-PLAN.md
-- [ ] 01-02-PLAN.md
-- [ ] 01-03-PLAN.md
+- [x] 01-02-PLAN.md
+- [x] 01-03-PLAN.md
 - Wave 1: [01-01](.planning/phases/01-foundation-first-pattern-post/01-01-PLAN.md) — Scaffold + Velite pipeline + MDX render + flash-free theming + Playwright smoke (FOUND-01, FOUND-03, FOUND-04)
 - Wave 2 *(blocked on Wave 1 completion, plans run in parallel)*:
   - [01-02](.planning/phases/01-foundation-first-pattern-post/01-02-PLAN.md) — Full Shiki plugin chain + complete Toast Pattern post + SEO metadata + reading time (FOUND-02, PATT-01, PATT-03, SITE-01, SITE-03)
@@ -101,7 +101,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & First Pattern Post | 1/3 | In Progress|  |
+| 1. Foundation & First Pattern Post | 3/3 | Complete   | 2026-06-30 |
 | 2. Live Demos & Patterns Track | 0/TBD | Not started | - |
 | 3. Cross-Linking Infrastructure | 0/TBD | Not started | - |
 | 4. Blueprints Track | 0/TBD | Not started | - |
