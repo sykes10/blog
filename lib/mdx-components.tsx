@@ -1,7 +1,10 @@
 import type { MDXComponents } from "mdx/types";
+import { Callout } from "@/components/mdx/Callout";
 
-// Typography-only component map for Phase 1.
-// No demo-component registry entries — deferred to Phase 2.
+// Component map for MDX rendering in Phase 1.
+// - Typography overrides: headings, inline code, external links
+// - Presentational MDX components: Callout
+// - No demo-component registry entries — deferred to Phase 2 (D-06/PATT-03)
 // This module contains the actual component map logic;
 // the root mdx-components.tsx re-exports useMDXComponents from here.
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -23,15 +26,24 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
         {children}
       </h3>
     ),
-    // Inline code: styled to differentiate from prose text
-    code: ({ children, ...props }) => (
-      <code
-        {...props}
-        className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
-      >
-        {children}
-      </code>
-    ),
+    // Inline code: styled to differentiate from prose text.
+    // Note: rehype-pretty-code wraps fenced code blocks in a data-[rehype-pretty-code-figure]
+    // element and applies its own <code> styling; this override only applies to
+    // inline `code` not inside a <pre> block.
+    code: ({ children, ...props }) => {
+      // If the parent is a pre (block code), don't apply inline styling
+      if (props["data-language"] !== undefined) {
+        return <code {...props}>{children}</code>;
+      }
+      return (
+        <code
+          {...props}
+          className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-sm text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
+        >
+          {children}
+        </code>
+      );
+    },
     // External links open in new tab
     a: ({ href, children, ...props }) => {
       const isExternal = href?.startsWith("http");
@@ -48,6 +60,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
         </a>
       );
     },
+    // Presentational MDX component — registered as <Callout> in MDX content
+    Callout,
     // Override the default components with any passed overrides
     ...components,
   };
