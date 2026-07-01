@@ -9,14 +9,14 @@ publishedAt: "2026-06-30"
 
 ## The Problem Toast Solves
 
-Most applications need a way to communicate transient, non-blocking feedback to users — "File saved", "Error connecting to server", "3 items added to cart". The challenge is that this feedback needs to exist outside the normal document flow. You cannot put a success message next to the button that triggered it if that button is in a modal that has since closed, or if the result came from a background process the user didn't initiate.
+Most applications need a way to communicate transient, non-blocking feedback to users: "File saved", "Error connecting to server", "3 items added to cart". The challenge is that this feedback needs to exist outside the normal document flow. You cannot put a success message next to the button that triggered it if that button is in a modal that has since closed, or if the result came from a background process the user didn't initiate.
 
 Toast notifications solve this by maintaining a separate rendering layer at a fixed viewport position. But the simplicity of "a little box that appears and disappears" conceals a surprising amount of production complexity:
 
 - **Queue management**: What happens when the user triggers 10 toasts in rapid succession? Naively appending all of them produces an unusable stack.
 - **Accessibility**: Toasts are useless if they are invisible to screen readers, but overly aggressive ARIA announcements create noise for users who rely on them.
 - **Auto-dismiss timing**: Fixed timeouts fail users who read slowly, are interrupted, or are on mobile where they can't hover to pause.
-- **Stacking and positioning**: The right layout behaviour under accumulation is not obvious — it depends on your UX goals and content density.
+- **Stacking and positioning**: The right layout behaviour under accumulation is not obvious. It depends on your UX goals and content density.
 
 A well-designed toast system is a small state machine with a clear API contract, not just a CSS animation with a `setTimeout`.
 
@@ -27,7 +27,7 @@ A well-designed toast system is a small state machine with a clear API contract,
 - Confirming user-initiated actions that succeed asynchronously (file save, form submit, item added to cart)
 - Non-critical error feedback where the user can retry or continue (network blip, optimistic update failure)
 - System events the user should know about but does not need to act on immediately (background sync complete, session about to expire)
-- Undoable actions where the notification itself contains a recovery action ("Item deleted — Undo")
+- Undoable actions where the notification itself contains a recovery action ("Item deleted", with an Undo action)
 
 **Avoid toasts for:**
 
@@ -44,29 +44,29 @@ If you would feel comfortable with the toast disappearing before an unhurried re
 
 | Approach | Pro | Con | When to Prefer |
 |----------|-----|-----|----------------|
-| **Single toast (replace-on-new)** | Never clutters the viewport; clear and unambiguous | New toasts drop context from previous ones; rapid actions feel unresponsive | Low-frequency, long-duration actions (file save, upload complete) |
-| **Stacked queue (FIFO, max N visible)** | Every action is acknowledged; useful for batch operations | Screen readers announce each entry; visual clutter accumulates under rapid fire | Batch operations, shopping carts, multi-select actions |
-| **Collapsed counter ("2 notifications")** | Scales to unlimited events without viewport pollution | Requires a secondary panel for detail; increases interaction cost | High-frequency event streams (CI runs, chat messages) |
-| **Auto-dismiss with pause-on-hover** | Respects the user's reading pace; clears automatically | Hover is unavailable on touch devices; users who tab away miss the pause | Desktop-primary apps with variable content length |
-| **Persistent until dismissed** | Guarantees the user sees the message | Accumulates if the user ignores; higher interaction cost | Critical errors, undo confirmations, messages with required actions |
+| **Single toast (replace-on-new)** | Never clutters the viewport. Clear and unambiguous | New toasts drop context from previous ones. Rapid actions feel unresponsive | Low-frequency, long-duration actions (file save, upload complete) |
+| **Stacked queue (FIFO, max N visible)** | Every action is acknowledged. Useful for batch operations | Screen readers announce each entry. Visual clutter accumulates under rapid fire | Batch operations, shopping carts, multi-select actions |
+| **Collapsed counter ("2 notifications")** | Scales to unlimited events without viewport pollution | Requires a secondary panel for detail. Increases interaction cost | High-frequency event streams (CI runs, chat messages) |
+| **Auto-dismiss with pause-on-hover** | Respects the user's reading pace. Clears automatically | Hover is unavailable on touch devices. Users who tab away miss the pause | Desktop-primary apps with variable content length |
+| **Persistent until dismissed** | Guarantees the user sees the message | Accumulates if the user ignores. Higher interaction cost | Critical errors, undo confirmations, messages with required actions |
 
 The right queue strategy is determined by your answer to two questions: *How often will toasts fire?* and *What is the consequence of missing one?* For most applications, a FIFO queue with a cap of three visible toasts, auto-dismiss with pause-on-hover, and a "dismiss all" affordance is a reasonable default.
 
 ## Common Mistakes
 
-**Hardcoding the auto-dismiss timeout.** A fixed 3-second timer works for "File saved" but cuts off "There was a problem connecting to the server. Please check your network and try again." The dismiss timer should scale with the content length — a common formula is `Math.max(minDuration, wordsInMessage / 3 * 1000)` (three words per second is roughly the reading rate for casual users).
+**Hardcoding the auto-dismiss timeout.** A fixed 3-second timer works for "File saved" but cuts off "There was a problem connecting to the server. Please check your network and try again." The dismiss timer should scale with the content length: a common formula is `Math.max(minDuration, wordsInMessage / 3 * 1000)` (three words per second is roughly the reading rate for casual users).
 
 **Triggering toasts synchronously in a user event handler.** If you call `addToast()` inside a React `onClick`, the toast fires on every click, including double-clicks. The call should be in the async operation's callback (`.then()`, `await` continuation, or mutation `onSuccess`), not the click handler itself.
 
 **Forgetting touch and keyboard users for pause-on-hover.** The pause-on-hover pattern only works for pointer devices. Touch users who cannot hover will have no way to extend the reading window. The canonical fix is to also pause on focus (so keyboard users can tab to the toast) and to respect `prefers-reduced-motion` by keeping toasts visible longer when animations are reduced.
 
-**Using `role="alert"` for every toast.** `role="alert"` is equivalent to `aria-live="assertive"` — it interrupts any ongoing screen-reader announcement immediately. This is the right choice for errors (the user needs to know now), but success or info toasts should use `role="status"` (equivalent to `aria-live="polite"`), which waits for the reader to finish its current sentence. Using `alert` everywhere creates a hostile experience for screen-reader users.
+**Using `role="alert"` for every toast.** `role="alert"` is equivalent to `aria-live="assertive"` and it interrupts any ongoing screen-reader announcement immediately. This is the right choice for errors (the user needs to know now), but success or info toasts should use `role="status"` (equivalent to `aria-live="polite"`), which waits for the reader to finish its current sentence. Using `alert` everywhere creates a hostile experience for screen-reader users.
 
-**Storing dismiss state in the toasts themselves.** If your toast includes an "Undo" action, the undo state should live in the parent feature, not the toast. The toast is a notification vehicle; the undo callback is business logic. When the toast auto-dismisses and the user has not acted, the undo window should close gracefully — not leave an orphaned callback.
+**Storing dismiss state in the toasts themselves.** If your toast includes an "Undo" action, the undo state should live in the parent feature, not the toast. The toast is a notification vehicle. The undo callback is business logic. When the toast auto-dismisses and the user has not acted, the undo window should close gracefully and not leave an orphaned callback.
 
 ## Accessibility Considerations
 
-The ARIA live region model is the foundation of accessible toasts. The region must exist in the DOM before any toasts are added to it — screen readers register live regions at parse time, not at mutation time. Creating the container dynamically (rendering it only when the first toast fires) causes screen readers to miss the first announcement.
+The ARIA live region model is the foundation of accessible toasts. The region must exist in the DOM before any toasts are added to it: screen readers register live regions at parse time, not at mutation time. Creating the container dynamically (rendering it only when the first toast fires) causes screen readers to miss the first announcement.
 
 ```html
 <!-- The live region container must exist in the DOM at page load,
@@ -96,10 +96,10 @@ function toastToAriaPolicy(type: ToastType): LiveRegionPolicy {
 }
 ```
 
-WCAG 2.1 Success Criterion 2.2.2 (Pause, Stop, Hide — Level AA) requires that moving or auto-updating content can be paused, stopped, or hidden by the user. Auto-dismissing toasts are covered by this criterion. The correct approach:
+WCAG 2.1 Success Criterion 2.2.2 (Pause, Stop, Hide, Level AA) requires that moving or auto-updating content can be paused, stopped, or hidden by the user. Auto-dismissing toasts are covered by this criterion. The correct approach:
 
 1. Pause the timer on `:hover` and `:focus-within` (pointer and keyboard users)
-2. Respect `prefers-reduced-motion` — when the user has requested reduced motion, either keep toasts persistent or extend the timeout significantly rather than removing the animation
+2. Respect `prefers-reduced-motion`: when the user has requested reduced motion, either keep toasts persistent or extend the timeout significantly rather than removing the animation
 3. Provide a manual dismiss button on every toast (accessible label: "Dismiss notification")
 
 ```css
@@ -115,7 +115,7 @@ WCAG 2.1 Success Criterion 2.2.2 (Pause, Stop, Hide — Level AA) requires that 
 
 ## Performance Implications
 
-**React re-renders on every timer tick.** If you use `setInterval` to update a countdown display inside a toast, you are re-rendering the entire toast tree every second. The timer state should stay outside React — use a `ref` to track the timer handle and only call state updates (`addToast` / `removeToast`) when the state actually changes (a toast is added or removed). Displaying elapsed time or a progress bar in a toast is almost always not worth the re-render cost; prefer CSS animations driven by the same timeout.
+**React re-renders on every timer tick.** If you use `setInterval` to update a countdown display inside a toast, you are re-rendering the entire toast tree every second. The timer state should stay outside React: use a `ref` to track the timer handle and only call state updates (`addToast` / `removeToast`) when the state actually changes (a toast is added or removed). Displaying elapsed time or a progress bar in a toast is almost always not worth the re-render cost. Prefer CSS animations driven by the same timeout.
 
 ```tsx
 // Prefer CSS animation over JS interval for the dismiss timer UI
@@ -141,7 +141,7 @@ The animation is paused via CSS when the toast is hovered, with no JavaScript ti
 }
 ```
 
-**Batching rapid-fire toasts.** In a React 18+ application, multiple `addToast` calls within the same event handler are batched automatically by React's concurrent mode. But calls that arrive asynchronously (from separate `Promise.then()` callbacks) are not batched. If your use case fires many toasts in quick succession (e.g., multiple uploads completing within the same second), debounce or collapse them at the API layer before they reach the queue — `10 uploads complete` is more useful than 10 individual toasts.
+**Batching rapid-fire toasts.** In a React 18+ application, multiple `addToast` calls within the same event handler are batched automatically by React's concurrent mode. But calls that arrive asynchronously (from separate `Promise.then()` callbacks) are not batched. If your use case fires many toasts in quick succession (e.g., multiple uploads completing within the same second), debounce or collapse them at the API layer before they reach the queue: `10 uploads complete` is more useful than 10 individual toasts.
 
 ## Edge Cases
 
@@ -251,5 +251,5 @@ function useToastTimer(toast: Toast, remove: (id: string) => void) {
 ```
 
 <Callout type="note" title="On using a library">
-For production applications, [Sonner](https://sonner.emilkowal.ski/) by Emil Kowalski is the current gold-standard implementation — it handles queue management, accessibility, and gesture-based swipe-to-dismiss out of the box. Build your own only when you have specific constraints (bundle size budget, design system integration, framework limitations) that Sonner cannot accommodate. The implementation above is instructive, not prescriptive.
+For production applications, [Sonner](https://sonner.emilkowal.ski/) by Emil Kowalski is the current gold-standard implementation, handling queue management, accessibility, and gesture-based swipe-to-dismiss out of the box. Build your own only when you have specific constraints (bundle size budget, design system integration, framework limitations) that Sonner cannot accommodate. The implementation above is instructive, not prescriptive.
 </Callout>
