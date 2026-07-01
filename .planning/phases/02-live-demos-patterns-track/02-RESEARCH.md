@@ -431,7 +431,7 @@ export async function generateStaticParams() {
 
 **If this table is empty:** N/A — see entries above; all are low-to-moderate risk and each has an explicit mitigation or is flagged as an open question.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should the manual accessibility pass include macOS/VoiceOver in addition to NVDA/Windows?**
    - What we know: The dev environment is confirmed Windows 11 (per env metadata); NVDA+Firefox is a well-established, low-cost single-platform manual testing pairing.
