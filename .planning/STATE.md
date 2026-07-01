@@ -85,6 +85,7 @@ None yet.
 | 260701-vkm | Create a WRITING-STYLE.md document defining the blog's writing style guide covering human tone, avoiding em-dashes and semicolons, and not over-explaining | 2026-07-01 | cb98874 | [260701-vkm-create-a-writing-style-md-document-defin](./quick/260701-vkm-create-a-writing-style-md-document-defin/) |
 | 260701-vws | Review content/patterns/toast-notification-system.mdx and rewrite its prose to comply with WRITING-STYLE.md | 2026-07-01 | fdf7caf | [260701-vws-review-content-patterns-toast-notificati](./quick/260701-vws-review-content-patterns-toast-notificati/) |
 | 260701-w43 | Fix homepage hero copy in app/page.tsx to remove em dash per WRITING-STYLE.md | 2026-07-01 | ab5727e | [260701-w43-fix-homepage-hero-copy-in-app-page-tsx-t](./quick/260701-w43-fix-homepage-hero-copy-in-app-page-tsx-t/) |
+| 260701-w7q | Fix two remaining em dashes in app/layout.tsx per WRITING-STYLE.md | 2026-07-01 | 77d0313 | [260701-w7q-fix-two-remaining-em-dashes-in-app-layou](./quick/260701-w7q-fix-two-remaining-em-dashes-in-app-layou/) |
 
 ## Deferred Items
 
@@ -102,4 +103,4 @@ Items acknowledged and carried forward from previous milestone close:
 Last session: 2026-06-30T19:28:26.930Z
 Stopped at: Phase 2 context gathered
 Resume file: .planning/phases/02-live-demos-patterns-track/02-CONTEXT.md
-Last activity: 2026-07-01 - Completed quick task 260701-w43: Fix homepage hero copy in app/page.tsx to remove em dash per WRITING-STYLE.md
+Last activity: 2026-07-01 - Completed quick task 260701-w7q: Fix two remaining em dashes in app/layout.tsx per WRITING-STYLE.md
