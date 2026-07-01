@@ -13,10 +13,10 @@ Most applications need a way to communicate transient, non-blocking feedback to 
 
 Toast notifications solve this by maintaining a separate rendering layer at a fixed viewport position. But the simplicity of "a little box that appears and disappears" conceals a surprising amount of production complexity:
 
-- **Queue management**: What happens when the user triggers 10 toasts in rapid succession? Naively appending all of them produces an unusable stack.
-- **Accessibility**: Toasts are useless if they are invisible to screen readers, but overly aggressive ARIA announcements create noise for users who rely on them.
-- **Auto-dismiss timing**: Fixed timeouts fail users who read slowly, are interrupted, or are on mobile where they can't hover to pause.
-- **Stacking and positioning**: The right layout behaviour under accumulation is not obvious. It depends on your UX goals and content density.
+- **Queue management.** What happens when the user triggers 10 toasts in rapid succession? Naively appending all of them produces an unusable stack.
+- **Accessibility.** Toasts are useless if they are invisible to screen readers, but overly aggressive ARIA announcements create noise for users who rely on them.
+- **Auto-dismiss timing.** Fixed timeouts fail users who read slowly, are interrupted, or are on mobile where they can't hover to pause.
+- **Stacking and positioning.** The right layout behaviour under accumulation is not obvious, because it depends on your UX goals and content density.
 
 A well-designed toast system is a small state machine with a clear API contract, not just a CSS animation with a `setTimeout`.
 
@@ -31,10 +31,10 @@ A well-designed toast system is a small state machine with a clear API contract,
 
 **Avoid toasts for:**
 
-- **Errors that block the task**: If the form cannot be submitted because of validation errors, the toast is gone before the user fixes the problem. Put the error inline.
-- **Confirmation of destructive actions**: "Are you sure?" should be a modal, not a toast. By the time the user reads the toast, the action has already happened.
-- **Long-lived status**: A toast that lingers to show "processing…" and then "done" is fighting its own nature. Use a progress indicator or inline status for operations that take more than a second.
-- **Critical, must-read alerts**: If missing the message has real consequences (authentication expiry, unsaved data warning), a modal or banner that requires dismissal is appropriate. Toasts are for fire-and-forget feedback, not for information users must act on.
+- **Errors that block the task.** If the form cannot be submitted because of validation errors, the toast is gone before the user fixes the problem. Put the error inline.
+- **Confirmation of destructive actions.** "Are you sure?" should be a modal, not a toast, because by the time the user reads the toast, the action has already happened.
+- **Long-lived status.** A toast that lingers to show "processing…" and then "done" is fighting its own nature. Use a progress indicator or inline status for operations that take more than a second.
+- **Critical, must-read alerts.** If missing the message has real consequences (authentication expiry, unsaved data warning), a modal or banner that requires dismissal is appropriate. Toasts are for fire-and-forget feedback, not for information users must act on.
 
 <Callout type="tip" title="The accessibility test">
 If you would feel comfortable with the toast disappearing before an unhurried reader finishes it, you are using the right component. If you are anxious that they might miss it, it belongs in a more persistent UI element.
@@ -54,7 +54,7 @@ The right queue strategy is determined by your answer to two questions: *How oft
 
 ## Common Mistakes
 
-**Hardcoding the auto-dismiss timeout.** A fixed 3-second timer works for "File saved" but cuts off "There was a problem connecting to the server. Please check your network and try again." The dismiss timer should scale with the content length: a common formula is `Math.max(minDuration, wordsInMessage / 3 * 1000)` (three words per second is roughly the reading rate for casual users).
+**Hardcoding the auto-dismiss timeout.** A fixed 3-second timer works for "File saved" but cuts off "There was a problem connecting to the server. Please check your network and try again." The dismiss timer should scale with the content length. A common formula is `Math.max(minDuration, wordsInMessage / 3 * 1000)` (three words per second is roughly the reading rate for casual users).
 
 **Triggering toasts synchronously in a user event handler.** If you call `addToast()` inside a React `onClick`, the toast fires on every click, including double-clicks. The call should be in the async operation's callback (`.then()`, `await` continuation, or mutation `onSuccess`), not the click handler itself.
 
@@ -66,7 +66,7 @@ The right queue strategy is determined by your answer to two questions: *How oft
 
 ## Accessibility Considerations
 
-The ARIA live region model is the foundation of accessible toasts. The region must exist in the DOM before any toasts are added to it: screen readers register live regions at parse time, not at mutation time. Creating the container dynamically (rendering it only when the first toast fires) causes screen readers to miss the first announcement.
+The ARIA live region model is the foundation of accessible toasts. The region must exist in the DOM before any toasts are added to it, because screen readers register live regions at parse time, not at mutation time. Creating the container dynamically (rendering it only when the first toast fires) causes screen readers to miss the first announcement.
 
 ```html
 <!-- The live region container must exist in the DOM at page load,
@@ -82,7 +82,7 @@ The ARIA live region model is the foundation of accessible toasts. The region mu
 </div>
 ```
 
-`aria-atomic="false"` is important: it tells the screen reader to announce only the newly added content (the new toast), not the entire region (which would re-read all visible toasts every time one is added). `aria-relevant="additions text"` restricts announcements to new content only, suppressing announcements when a toast is removed.
+`aria-atomic="false"` matters here. It tells the screen reader to announce only the newly added content (the new toast), not the entire region (which would re-read all visible toasts every time one is added). `aria-relevant="additions text"` restricts announcements to new content only, suppressing announcements when a toast is removed.
 
 For error toasts, upgrade the live region role to `assertive`:
 
@@ -96,7 +96,7 @@ function toastToAriaPolicy(type: ToastType): LiveRegionPolicy {
 }
 ```
 
-WCAG 2.1 Success Criterion 2.2.2 (Pause, Stop, Hide, Level AA) requires that moving or auto-updating content can be paused, stopped, or hidden by the user. Auto-dismissing toasts are covered by this criterion. The correct approach:
+WCAG 2.1 Success Criterion 2.2.2 (Pause, Stop, Hide, Level AA) requires that moving or auto-updating content can be paused, stopped, or hidden by the user. Auto-dismissing toasts are covered by these guidelines. The correct approach:
 
 1. Pause the timer on `:hover` and `:focus-within` (pointer and keyboard users)
 2. Respect `prefers-reduced-motion`: when the user has requested reduced motion, either keep toasts persistent or extend the timeout significantly rather than removing the animation
@@ -115,7 +115,7 @@ WCAG 2.1 Success Criterion 2.2.2 (Pause, Stop, Hide, Level AA) requires that mov
 
 ## Performance Implications
 
-**React re-renders on every timer tick.** If you use `setInterval` to update a countdown display inside a toast, you are re-rendering the entire toast tree every second. The timer state should stay outside React: use a `ref` to track the timer handle and only call state updates (`addToast` / `removeToast`) when the state actually changes (a toast is added or removed). Displaying elapsed time or a progress bar in a toast is almost always not worth the re-render cost. Prefer CSS animations driven by the same timeout.
+**React re-renders on every timer tick.** If you use `setInterval` to update a countdown display inside a toast, you are re-rendering the entire toast tree every second. The timer state should stay outside React, so use a `ref` to track the timer handle and only call state updates (`addToast` / `removeToast`) when the state actually changes (a toast is added or removed). Displaying elapsed time or a progress bar in a toast is almost always not worth the re-render cost. Prefer CSS animations driven by the same timeout.
 
 ```tsx
 // Prefer CSS animation over JS interval for the dismiss timer UI
@@ -141,7 +141,7 @@ The animation is paused via CSS when the toast is hovered, with no JavaScript ti
 }
 ```
 
-**Batching rapid-fire toasts.** In a React 18+ application, multiple `addToast` calls within the same event handler are batched automatically by React's concurrent mode. But calls that arrive asynchronously (from separate `Promise.then()` callbacks) are not batched. If your use case fires many toasts in quick succession (e.g., multiple uploads completing within the same second), debounce or collapse them at the API layer before they reach the queue: `10 uploads complete` is more useful than 10 individual toasts.
+**Batching rapid-fire toasts.** In a React 18+ application, multiple `addToast` calls within the same event handler are batched automatically by React's concurrent mode. But calls that arrive asynchronously (from separate `Promise.then()` callbacks) are not batched. If your use case fires many toasts in quick succession (e.g., multiple uploads completing within the same second), debounce or collapse them at the API layer before they reach the queue. `10 uploads complete` is more useful than 10 individual toasts.
 
 ## Edge Cases
 
