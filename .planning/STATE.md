@@ -82,6 +82,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260701-va7 | Create a new top-level DESIGN.md documenting the visual/UI design system for Frontend Blueprints | 2026-07-01 | 9c6076b | [260701-va7-create-a-new-top-level-design-md-documen](./quick/260701-va7-create-a-new-top-level-design-md-documen/) |
+| 260701-vkm | Create a WRITING-STYLE.md document defining the blog's writing style guide covering human tone, avoiding em-dashes and semicolons, and not over-explaining | 2026-07-01 | cb98874 | [260701-vkm-create-a-writing-style-md-document-defin](./quick/260701-vkm-create-a-writing-style-md-document-defin/) |
 
 ## Deferred Items
 
@@ -99,4 +100,4 @@ Items acknowledged and carried forward from previous milestone close:
 Last session: 2026-06-30T19:28:26.930Z
 Stopped at: Phase 2 context gathered
 Resume file: .planning/phases/02-live-demos-patterns-track/02-CONTEXT.md
-Last activity: 2026-07-01 - Completed quick task 260701-va7: Create a new top-level DESIGN.md documenting the visual/UI design system for Frontend Blueprints
+Last activity: 2026-07-01 - Completed quick task 260701-vkm: Create a WRITING-STYLE.md document defining the blog's writing style guide covering human tone, avoiding em-dashes and semicolons, and not over-explaining
