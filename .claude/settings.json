@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\);console.log\\(j.filter\\(c=>/ui/i.test\\(c.id\\)\\)\\)}\\)\")",
+      "Bash(node C:/Users/Alex/workspace/blog/.claude/gsd-core/bin/gsd-tools.cjs capability state ui --raw)",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\);const ui=j.capabilities.find\\(c=>c.id==='ui'\\);console.log\\(JSON.stringify\\(ui,null,2\\)\\)}\\)\")",
+      "Bash(node C:/Users/Alex/workspace/blog/.claude/gsd-core/bin/gsd-tools.cjs query)",
+      "Bash(node C:/Users/Alex/workspace/blog/.claude/gsd-core/bin/gsd-tools.cjs state planned-phase)",
+      "Bash(node C:/Users/Alex/workspace/blog/.claude/gsd-core/bin/gsd-tools.cjs state planned-phase 02 'Live Demos & Patterns Track' 3)",
+      "Skill(gsd-docs-update)",
+      "Skill(gsd-docs-update:*)",
+      "Skill(gsd-quick)",
+      "Skill(gsd-quick:*)",
+      "Bash(git config *)",
+      "Bash(git -C \"C:/Users/Alex/workspace/blog/.claude/worktrees/agent-a18c9f1063f60dd9a\" status --porcelain)",
+      "Bash(git log *)",
+      "Bash(awk 'BEGIN{c=0} /^```/{c=!c; next} !c && \\(/—/ || /;/\\){print NR\": \"$0}' content/patterns/toast-notification-system.mdx)"
+    ]
+  }
+}
