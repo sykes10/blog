@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Patterns",
   description:
-    "Focused explorations of reusable frontend concepts — components, behaviours, and engineering techniques.",
+    "Focused explorations of reusable frontend concepts: components, behaviours, and engineering techniques.",
 };
 
 export default function PatternsPage() {
@@ -17,7 +17,7 @@ export default function PatternsPage() {
           Patterns
         </h1>
         <p className="mt-3 text-base text-(--muted)">
-          Focused explorations of a single reusable concept — component,
+          Focused explorations of a single reusable concept: component,
           behaviour, or engineering technique.
         </p>
       </header>
