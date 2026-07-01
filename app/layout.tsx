@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s | Frontend Blueprints",
   },
   description:
-    "Production-grade mental models for frontend engineers — UX, architecture, state management, accessibility, and engineering trade-offs.",
+    "Production-grade mental models for frontend engineers: UX, architecture, state management, accessibility, and engineering trade-offs.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com"
   ),
@@ -44,7 +44,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-(--background) text-(--foreground) antialiased">
         {/* next-themes injects the blocking localStorage-read script automatically.
-            Do NOT hand-roll this script — next-themes handles it correctly. */}
+            Do NOT hand-roll this script. next-themes handles it correctly. */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <header className="sticky top-0 z-40 border-b border-(--border) bg-(--background)/90 backdrop-blur-sm">
             <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -69,7 +69,7 @@ export default function RootLayout({
           <footer className="border-t border-(--border) py-6">
             <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
               <p className="text-center text-sm text-(--muted)">
-                Frontend Blueprints — production-grade mental models for frontend engineers
+                Frontend Blueprints: production-grade mental models for frontend engineers
               </p>
             </div>
           </footer>
