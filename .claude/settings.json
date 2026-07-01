@@ -14,7 +14,10 @@
       "Bash(git config *)",
       "Bash(git -C \"C:/Users/Alex/workspace/blog/.claude/worktrees/agent-a18c9f1063f60dd9a\" status --porcelain)",
       "Bash(git log *)",
-      "Bash(awk 'BEGIN{c=0} /^```/{c=!c; next} !c && \\(/—/ || /;/\\){print NR\": \"$0}' content/patterns/toast-notification-system.mdx)"
+      "Bash(awk 'BEGIN{c=0} /^```/{c=!c; next} !c && \\(/—/ || /;/\\){print NR\": \"$0}' content/patterns/toast-notification-system.mdx)",
+      "Bash(node __CMDSUB_OUTPUT__/.claude/gsd-core/bin/gsd-tools.cjs query agent-skills gsd-planner)",
+      "Bash(node __CMDSUB_OUTPUT__/.claude/gsd-core/bin/gsd-tools.cjs query agent-skills gsd-executor)",
+      "Bash(powershell -NoProfile -Command \"Get-Process node -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,Path\")"
     ]
   }
 }
