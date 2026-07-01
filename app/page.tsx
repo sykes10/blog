@@ -11,7 +11,7 @@ export default function HomePage() {
           Frontend Blueprints
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-(--muted)">
-          Production-grade mental models for frontend engineers — covering
+          Production-grade mental models for frontend engineers: covering
           the why and the trade-offs as much as the how.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
