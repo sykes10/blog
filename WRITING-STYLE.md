@@ -34,8 +34,15 @@ Replacement moves:
 - For a break in thought or an aside, use a period and a new sentence, a comma, or parentheses.
 - To introduce a list or an elaboration, use a colon.
 - To join two related clauses, use a period, or connect them with "and" or "but." Don't reach for a semicolon to avoid choosing.
+- Don't use a colon as a substitute for a dash or double-hyphen when joining two clauses. A colon that introduces a genuine list or a real elaboration is fine. A colon that glues two independent thoughts together, the way a dash would, is not. If you catch yourself using a colon this way, rephrase into two sentences, or connect the clauses with "and," "so," or "because." When in doubt, skip the special-character connector entirely.
+
+**Don't:** The queue caps at three visible toasts: older ones drop off automatically.
+
+**Do:** The queue caps at three visible toasts. Older ones drop off automatically.
 
 Beyond punctuation, vary sentence length on purpose. A paragraph where every sentence runs twelve to eighteen words, subject-verb-object, reads flat and mechanical. Mix a short sentence next to a longer one. Let a fragment land for emphasis when it earns it.
+
+Prefer the common, everyday word over the grammatically precise but uncommon or formal one, even when the common word is slightly less exact, because it reads more natural and human. A technical standard might name something with a formal singular term, but if people actually talk about it with an everyday plural word, use the everyday word in running prose. This holds even when the formal term would be more precise, since the reader values natural phrasing over pedantic correctness.
 
 ## 4. Explaining Versus Over-Explaining
 
