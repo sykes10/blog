@@ -1,8 +1,8 @@
 ---
 phase: 02
 slug: live-demos-patterns-track
-status: draft
-nyquist_compliant: false
+status: planned
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-07-01
 ---
@@ -36,15 +36,15 @@ created: 2026-07-01
 
 ## Per-Task Verification Map
 
-*Task IDs finalized once PLAN.md files exist — planner must map each row below to a concrete task ID.*
+*Task IDs map to `{plan}.T{n}` within Phase 02. Wave 1 for all plans (independent, parallel). The Task 1 of each plan is the Wave-0 failing-spec (RED) that its later tasks turn GREEN.*
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | TBD | PATT-02 | V5 | Demo click updates UI optimistically, then confirms or shows a visible rollback/error state | smoke | `npx playwright test tests/patterns-demo.spec.ts -g "optimistic demo"` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | PATT-04 | V5 | `/patterns/category/[category]` returns 200 and lists only posts in that category | smoke | `npx playwright test tests/patterns-category.spec.ts` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | PATT-04 | V5 | `/patterns/category/nonsense` returns 404 (route param validated against enum) | smoke | `npx playwright test tests/patterns-category.spec.ts -g "404"` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | PATT-04 | — | Tag chip filter narrows the visible list when a tag is clicked | smoke | `npx playwright test tests/patterns-tag-filter.spec.ts` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | SITE-04 | — | TOC renders a link per heading; clicking a link scrolls to/activates the matching heading id | smoke | `npx playwright test tests/patterns-toc.spec.ts` | ❌ W0 | ⬜ pending |
+| 02-01.T1/T3 | 02-01 | 1 | PATT-02 | V5 / T-02-01 | Demo click updates UI optimistically, then confirms or shows a visible rollback/error state (failure message is generic, no error.stack) | smoke | `npx playwright test tests/patterns-demo.spec.ts -g "optimistic demo"` | ❌ W0 (02-01.T1) | ⬜ pending |
+| 02-02.T1/T2 | 02-02 | 1 | PATT-04 | V5 / T-02-03 | `/patterns/category/[category]` returns 200 and lists only posts in that category | smoke | `npx playwright test tests/patterns-category.spec.ts` | ❌ W0 (02-02.T1) | ⬜ pending |
+| 02-02.T1/T2 | 02-02 | 1 | PATT-04 | V5 / T-02-03 | `/patterns/category/nonsense` returns 404 (route param validated against enum) | smoke | `npx playwright test tests/patterns-category.spec.ts -g "404"` | ❌ W0 (02-02.T1) | ⬜ pending |
+| 02-02.T1/T3 | 02-02 | 1 | PATT-04 | — / T-02-04 | Tag chip filter narrows the visible list when a tag is clicked (aria-pressed toggles) | smoke | `npx playwright test tests/patterns-tag-filter.spec.ts` | ❌ W0 (02-02.T1) | ⬜ pending |
+| 02-03.T1/T3 | 02-03 | 1 | SITE-04 | — / T-02-05 | TOC renders a link per heading; clicking a link scrolls to/activates the matching heading id | smoke | `npx playwright test tests/patterns-toc.spec.ts` | ❌ W0 (02-03.T1) | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 

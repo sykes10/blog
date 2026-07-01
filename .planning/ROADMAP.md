@@ -62,7 +62,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A visitor reading a long post can jump to any heading via a table of contents with anchor links
   4. Multiple Pattern posts are live, each independently following the structural template from Phase 1, spanning more than one category (e.g. a UI component, a behaviour, an engineering technique)
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+- Wave 1 *(all three plans are independent — zero file overlap — and run in parallel)*:
+  - [ ] [02-01](.planning/phases/02-live-demos-patterns-track/02-01-PLAN.md) — Optimistic Updates live demo (useOptimistic + rollback) + new Behaviours Pattern post (PATT-02)
+  - [ ] [02-02](.planning/phases/02-live-demos-patterns-track/02-02-PLAN.md) — Category browsing via static routes + client-side tag chip filter (PATT-04)
+  - [ ] [02-03](.planning/phases/02-live-demos-patterns-track/02-03-PLAN.md) — Table of contents with anchor links + IntersectionObserver scroll-spy (SITE-04)
+
 **UI hint**: yes
 
 ### Phase 3: Cross-Linking Infrastructure
@@ -102,6 +108,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & First Pattern Post | 3/3 | Complete    | 2026-06-30 |
-| 2. Live Demos & Patterns Track | 0/TBD | Not started | - |
+| 2. Live Demos & Patterns Track | 0/3 | Not started | - |
 | 3. Cross-Linking Infrastructure | 0/TBD | Not started | - |
 | 4. Blueprints Track | 0/TBD | Not started | - |
