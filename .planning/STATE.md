@@ -6,11 +6,13 @@ current_phase: 2
 current_phase_name: Live Demos & Patterns Track
 status: completed
 stopped_at: Phase 2 context gathered
-last_updated: "2026-06-30T19:28:26.937Z"
+last_updated: "2026-07-01T22:30:14.455Z"
+last_activity: 2026-07-01
+last_activity_desc: "Completed quick task 260701-wgo: Add colon-as-dash and plain-word rules to WRITING-STYLE.md, rewrite toast-notification-system.mdx prose to comply"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 3
+  total_plans: 6
   completed_plans: 3
   percent: 25
 ---
@@ -87,6 +89,7 @@ None yet.
 | 260701-w43 | Fix homepage hero copy in app/page.tsx to remove em dash per WRITING-STYLE.md | 2026-07-01 | ab5727e | [260701-w43-fix-homepage-hero-copy-in-app-page-tsx-t](./quick/260701-w43-fix-homepage-hero-copy-in-app-page-tsx-t/) |
 | 260701-w7q | Fix two remaining em dashes in app/layout.tsx per WRITING-STYLE.md | 2026-07-01 | 77d0313 | [260701-w7q-fix-two-remaining-em-dashes-in-app-layou](./quick/260701-w7q-fix-two-remaining-em-dashes-in-app-layou/) |
 | 260701-was | Fix two remaining em dashes in app/patterns/page.tsx per WRITING-STYLE.md | 2026-07-01 | fb1329f | [260701-was-fix-two-remaining-em-dashes-in-app-patte](./quick/260701-was-fix-two-remaining-em-dashes-in-app-patte/) |
+| 260701-wgo | Add colon-as-dash and plain-word rules to WRITING-STYLE.md, rewrite toast-notification-system.mdx prose to comply | 2026-07-01 | 35b2f68 | [260701-wgo-rewrite-toast-notification-system-blog-p](./quick/260701-wgo-rewrite-toast-notification-system-blog-p/) |
 
 ## Deferred Items
 
@@ -101,7 +104,7 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-30T19:28:26.930Z
+Last session: 2026-07-01T22:30:14.448Z
 Stopped at: Phase 2 context gathered
 Resume file: .planning/phases/02-live-demos-patterns-track/02-CONTEXT.md
-Last activity: 2026-07-01 - Completed quick task 260701-was: Fix two remaining em dashes in app/patterns/page.tsx per WRITING-STYLE.md
+Last activity: 2026-07-01 - Completed quick task 260701-wgo: Add colon-as-dash and plain-word rules to WRITING-STYLE.md, rewrite toast-notification-system.mdx prose to comply
