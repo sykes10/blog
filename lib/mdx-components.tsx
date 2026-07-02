@@ -1,10 +1,11 @@
 import type { MDXComponents } from "mdx/types";
 import { Callout } from "@/components/mdx/Callout";
+import { OptimisticUpdatesDemo } from "@/components/demos/OptimisticUpdatesDemo";
 
-// Component map for MDX rendering in Phase 1.
+// Component map for MDX rendering.
 // - Typography overrides: headings, inline code, external links
 // - Presentational MDX components: Callout
-// - No demo-component registry entries — deferred to Phase 2 (D-06/PATT-03)
+// - Demo-component registry: OptimisticUpdatesDemo (Phase 2, D-04/D-05/PATT-02)
 // This module contains the actual component map logic;
 // the root mdx-components.tsx re-exports useMDXComponents from here.
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -62,6 +63,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     },
     // Presentational MDX component — registered as <Callout> in MDX content
     Callout,
+    // Live demo island — registered as <OptimisticUpdatesDemo /> in MDX content
+    OptimisticUpdatesDemo,
     // Override the default components with any passed overrides
     ...components,
   };
