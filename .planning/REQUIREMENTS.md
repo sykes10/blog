@@ -36,7 +36,7 @@
 - [x] **SITE-01**: Each post has accurate SEO metadata (Open Graph tags, JSON-LD, page title/description)
 - [x] **SITE-02**: Site exposes an RSS feed and sitemap
 - [x] **SITE-03**: Each post displays estimated reading time
-- [ ] **SITE-04**: Long posts have a table of contents with anchor links to headings
+- [x] **SITE-04**: Long posts have a table of contents with anchor links to headings
 
 ## v2 Requirements
 
@@ -85,7 +85,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SITE-03 | Phase 1 | Complete |
 | PATT-02 | Phase 2 | Pending |
 | PATT-04 | Phase 2 | Pending |
-| SITE-04 | Phase 2 | Pending |
+| SITE-04 | Phase 2 | Complete |
 | LINK-01 | Phase 3 | Pending |
 | LINK-02 | Phase 3 | Pending |
 | LINK-03 | Phase 3 | Pending |
