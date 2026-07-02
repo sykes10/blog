@@ -1,0 +1,139 @@
+---
+title: "Optimistic Updates"
+slug: "optimistic-updates"
+description: "How to make UI feel instant with optimistic state, simulated network delay, and automatic rollback on failure using React 19's useOptimistic."
+category: behaviours
+tags: ["state-management", "accessibility", "react", "performance"]
+publishedAt: "2026-07-02"
+---
+
+## The Problem Optimistic Updates Solve
+
+Every mutation your app makes goes through a network round trip. Click "like," and the request has to leave the browser, hit a server, write to a database, and come back before the UI shows anything different. On a fast connection that round trip is maybe 100ms. On a slow one, or under load, it can be a full second or more. Either way, waiting for confirmation before updating the UI makes an app feel laggy even when nothing is actually broken.
+
+Optimistic updates fix this by inverting the order. The UI updates the moment the user acts, showing the result you expect the server to confirm. The request still goes out in the background, but the user doesn't wait for it. If the server agrees, nothing else happens. The optimistic state was already correct. If the server disagrees, the UI has to revert and explain why, cleanly and visibly, or the user has no idea their action didn't actually take.
+
+<OptimisticUpdatesDemo />
+
+Try clicking Like a few times. Most clicks succeed instantly and stay that way. Some fail on purpose (this demo rejects about 40% of requests) and you'll see the count snap back with an error message. That failure path is the actual engineering problem this pattern solves: the instant feedback is easy, the honest rollback is the part people skip.
+
+## When to Use (and When Not To)
+
+**Use optimistic updates for:**
+
+- High-frequency, low-risk actions where the user expects instant feedback: likes, upvotes, checkbox toggles, drag-and-drop reordering
+- Actions with a very high success rate in practice, so the rollback path is rare and the instant-feedback path is the common case
+- Actions where a brief, visible correction on failure is an acceptable cost (the UI flickers back, an error shows) rather than a serious problem
+
+**Avoid optimistic updates for:**
+
+- **Actions with real consequences on failure.** Charging a card, submitting a legal agreement, deleting data. If reverting the UI isn't enough to undo the user's mental model of what happened, don't show them a false success first.
+- **Actions where the server response carries information the client can't predict.** If the server assigns an ID, computes a derived value, or applies business logic the client doesn't know about, the "optimistic" state you'd show is a guess, and a wrong guess erodes trust faster than a loading spinner would.
+- **Low-frequency, high-latency actions where a spinner is the honest signal.** Uploading a large file takes real time. Pretending it's done and then failing later is worse than just showing progress.
+
+<Callout type="tip" title="The trust test">
+Optimistic updates work because most of the time they're right. If your failure rate is high enough that users regularly see the rollback, you don't have an optimistic-UI problem, you have an underlying reliability problem, and no amount of clever rollback messaging fixes that.
+</Callout>
+
+## Trade-offs
+
+| Approach | Pro | Con | When to Prefer |
+|----------|-----|-----|-----------------|
+| **Optimistic update (client predicts, reverts on failure)** | Feels instant. No loading state for the common case | Wrong guess means a visible flicker and an error message. Requires a legible revert path | High-frequency, low-risk, high-success-rate actions |
+| **Pessimistic update (wait for server, then update)** | Never shows a wrong state. Simple to reason about | Every action has a visible delay, even successful ones | Actions with real consequences or unpredictable server-side results |
+| **Optimistic with a delayed spinner (show pending only past a threshold)** | Fast actions feel instant, slow ones get honest feedback | More state to manage (is this pending, optimistic, or committed?) | Actions with variable latency where you can't guarantee a fast response |
+
+The choice comes down to one question: how often will your prediction be wrong, and how bad is it when it is? A like button that's wrong 1% of the time and shows a brief correction is a fine trade. A checkout button that's wrong 1% of the time and shows the user a "success" screen for an order that didn't go through is not.
+
+## Common Mistakes
+
+**Calling the optimistic setter outside a transition.** React's `useOptimistic` setter only applies cleanly inside `startTransition` (or a form Action). Call it directly in a synchronous click handler and the optimistic value renders for a frame, then reverts immediately, because React never entered a pending transition to hold it in place. It looks like a rendering bug. It's a missing `startTransition` wrapper.
+
+**Hand-rolling the revert logic.** Before `useOptimistic` existed, the common pattern was to snapshot the previous state, mutate, and manually restore the snapshot in a catch block. That's more code, more places to get the restore wrong, and it duplicates what the hook already does correctly: when the transition's action throws, the optimistic value simply re-renders from the unchanged base state. Don't build this by hand once the primitive exists.
+
+**Reverting silently.** `useOptimistic`'s automatic revert is a rendering behavior only. It doesn't tell the user anything happened. If you pair it with no visible message, the user sees their like count snap back down a moment after clicking and has no idea why. The revert has to come with an explanation, not just a correction.
+
+**Injecting the error message container only when there's an error to show.** If the `<div>` that holds your error text doesn't exist in the DOM until the first failure, screen readers won't pick it up. They register live regions when the page loads, not when content changes inside a container that didn't exist a moment ago. The container needs to be there from the start, empty, and get filled in when something goes wrong.
+
+## Accessibility Considerations
+
+The visual revert is not enough on its own. A sighted user who's looking directly at the button might catch the flicker. A screen reader user gets nothing from a DOM attribute silently changing back, and a sighted user who glanced away between the click and the revert misses it too. The failure needs an explicit, announced message.
+
+That means an `aria-live="polite"` region that exists in the DOM before any interaction happens, not one that gets mounted at the moment of failure:
+
+```tsx
+// Present on initial render, empty until there's something to announce.
+<div role="status" aria-live="polite" className="sr-only">
+  {error ? `Error: ${error} Reverted to previous state.` : ""}
+</div>
+```
+
+`role="status"` (equivalent to `aria-live="polite"`) is the right politeness level here. The failure matters, but it isn't an emergency, so it doesn't need to interrupt whatever the screen reader is currently announcing the way `role="alert"` would. It waits for a natural pause and then reads the message.
+
+Keyboard support falls out of using a real `<button>` element rather than a styled `<div>` with a click handler. Native buttons are reachable by Tab and activate on both Enter and Space with no extra wiring. Don't reach for a `<div onClick>` here just because you want more control over the markup. You'd have to reimplement focus handling and keyboard activation by hand to get back to where a `<button>` already starts you.
+
+The `aria-pressed` attribute on the button also matters beyond visual styling. It tells assistive technology the button represents a toggled state (liked or not), not a one-shot action, which is a meaningfully different interaction model for a screen reader user than a plain button click.
+
+## Performance Implications
+
+The optimistic path itself is cheap. `useOptimistic` doesn't do anything expensive: it's a thin layer that shows a candidate value during a pending transition and falls back to the real state otherwise. The performance risk in this pattern shows up elsewhere.
+
+**Re-render scope.** If the component holding the optimistic state is large, every optimistic update re-renders that whole subtree, twice (once for the optimistic value, once for the committed value or the revert). Keep the optimistic state as close to the interactive element as reasonably possible rather than lifting it into a page-level store that re-renders everything on every click.
+
+**Rapid repeated clicks.** A user who double-clicks or rapid-fires the action before the first request resolves can end up with multiple in-flight transitions racing each other. `useOptimistic` handles the rendering correctly (it always shows the latest optimistic value), but your request logic still needs to decide what "correct" means when two mutations of the same resource are in flight at once. Debounce the action, disable the button while pending, or design the server side to be idempotent and last-write-wins. Don't assume it can't happen just because it's unlikely.
+
+**The simulated delay in a demo isn't the real cost.** A demo like the one above uses `setTimeout` to fake latency. Real production latency is variable, and a pattern that feels smooth at a consistent 700ms in a demo can feel very different at a 3-second P99 on a bad connection. Test the rollback UX at realistic tail latencies, not just the median.
+
+## Edge Cases
+
+**The base state changes while a mutation is pending.** If another user (or another tab) changes the underlying data while your optimistic update is in flight, a naive `useOptimistic(state)` call can show a prediction built on data that's already stale by the time it resolves. `useOptimistic` accepts a reducer overload, `useOptimistic(state, updateFn)`, specifically for this: the update function computes the next optimistic value from whatever the current base state is at render time, rather than baking in a value calculated once. Reach for this when concurrent updates to the same resource are a real possibility.
+
+**The user navigates away before the request resolves.** An in-flight optimistic mutation on a page the user has since left won't have anywhere to show its rollback message. Decide upfront whether the mutation should still complete in the background (fine for most likes/toggles) or should be cancelled on unmount (more appropriate for anything with a real side effect you don't want to happen after the user changed their mind).
+
+**Multiple optimistic actions on the same item in quick succession.** Liking, then unliking, then liking again before any of the three requests resolve creates three in-flight transitions against the same piece of state. `useOptimistic` will always render the most recent optimistic value, which is usually what you want, but your server needs to handle out-of-order arrival of these requests correctly (an idempotent, last-write-wins toggle endpoint handles this cleanly, a naive increment/decrement counter does not).
+
+## Implementation Considerations
+
+The full shape of the pattern is three pieces: real state, a hook-derived optimistic view of it, and a transition that ties the two together.
+
+```tsx
+"use client";
+
+import { useState, useOptimistic, startTransition } from "react";
+
+type Item = { id: string; liked: boolean };
+
+function LikeButton({ initial }: { initial: Item }) {
+  const [item, setItem] = useState(initial);
+  const [optimisticItem, setOptimisticItem] = useOptimistic(item);
+  const [error, setError] = useState<string | null>(null);
+
+  function handleToggle() {
+    const next = { ...item, liked: !item.liked };
+
+    startTransition(async () => {
+      setError(null);
+      setOptimisticItem(next); // shows immediately
+
+      try {
+        const confirmed = await updateLike(next);
+        setItem(confirmed); // commits real state on success
+      } catch (err) {
+        // No manual revert: the transition ends, optimisticItem re-renders
+        // from `item` (unchanged), so the UI reverts automatically.
+        setError(err instanceof Error ? err.message : "Update failed");
+      }
+    });
+  }
+
+  return (
+    <button onClick={handleToggle} aria-pressed={optimisticItem.liked}>
+      {optimisticItem.liked ? "Liked" : "Like"}
+    </button>
+  );
+}
+```
+
+Three details are easy to get wrong here. First, `setOptimisticItem` and the async call both live inside `startTransition`, not just the setter. Second, nothing in the catch block touches `optimisticItem` directly. The revert happens because the transition ends and React re-derives the optimistic value from the unchanged committed state, not because you wrote code to restore it. Third, the error message is deliberately generic and author-controlled rather than forwarding whatever the server or network layer threw. Demo and production code both get copied. Don't teach a pattern that leaks internal error detail (a stack trace, an ORM error string) into a user-facing message by accident.
+
+For the common case, `useOptimistic(state)` with no second argument is enough: the optimistic setter takes the new value directly. When the base state can genuinely change out from under a pending mutation (the concurrent-update edge case above), switch to the reducer form, `useOptimistic(state, (currentState, action) => nextState)`, so the optimistic value is always computed relative to whatever `state` actually is at the moment of the update, not a value captured when the handler first ran.
