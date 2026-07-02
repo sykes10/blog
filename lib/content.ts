@@ -21,3 +21,24 @@ export function getAllPatterns() {
 export function getPatternBySlug(slug: string) {
   return patterns.find((p) => p.slug === slug);
 }
+
+/**
+ * Returns all patterns whose category matches the given category.
+ */
+export function getPatternsByCategory(category: string) {
+  return patterns.filter((p) => p.category === category);
+}
+
+/**
+ * Returns all patterns whose tags include the given tag.
+ */
+export function getPatternsByTag(tag: string) {
+  return patterns.filter((p) => p.tags.includes(tag));
+}
+
+/**
+ * Returns the de-duplicated, sorted set of every tag across all patterns.
+ */
+export function getAllTags() {
+  return Array.from(new Set(patterns.flatMap((p) => p.tags))).sort();
+}
