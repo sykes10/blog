@@ -127,3 +127,7 @@ None - no external service configuration required.
 ---
 *Phase: 02-live-demos-patterns-track*
 *Completed: 2026-07-02*
+
+## Self-Check: PASSED
+
+All created files verified present on disk (lib/toc.ts, components/mdx/TableOfContents.tsx, tests/patterns-toc.spec.ts, this SUMMARY.md). All task commit hashes (12d8e3e, 0992e2b, f09c11a) and the summary commit (99b2edf) verified present in git log.
