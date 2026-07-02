@@ -17,7 +17,7 @@
 - [x] **PATT-01**: User can read a Pattern article following a consistent template: the problem it solves → when to use / when not to use → trade-offs → common mistakes → accessibility considerations → performance implications → edge cases → implementation considerations
 - [x] **PATT-02**: User can view a live, interactive demo of the real implementation embedded in a Pattern article, when the author chooses to include one
 - [x] **PATT-03**: User can view static code snippets with optional screenshots in a Pattern article, when a live demo isn't included
-- [ ] **PATT-04**: User can browse Pattern articles by category (Components, Behaviours, Engineering, UX) and by tag
+- [x] **PATT-04**: User can browse Pattern articles by category (Components, Behaviours, Engineering, UX) and by tag
 
 ### Cross-Linking
 
@@ -84,7 +84,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SITE-02 | Phase 1 | Complete |
 | SITE-03 | Phase 1 | Complete |
 | PATT-02 | Phase 2 | Complete |
-| PATT-04 | Phase 2 | Pending |
+| PATT-04 | Phase 2 | Complete |
 | SITE-04 | Phase 2 | Complete |
 | LINK-01 | Phase 3 | Pending |
 | LINK-02 | Phase 3 | Pending |
