@@ -161,3 +161,7 @@ None - no external service configuration required.
 ---
 *Phase: 02-live-demos-patterns-track*
 *Completed: 2026-07-02*
+
+## Self-Check: PASSED
+
+All created/modified files verified present on disk; all task and docs commit hashes (`512fed2`, `260322f`, `cad3dc6`, `a87eafd`) verified present in `git log --all`.
