@@ -14,7 +14,7 @@ This roadmap takes the blog from an empty repo to a working, shareable portfolio
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & First Pattern Post** - Scaffold the Next.js/MDX pipeline and ship one complete, readable, SEO-correct Pattern post end-to-end (completed 2026-06-30)
-- [ ] **Phase 2: Live Demos & Patterns Track** - Add the interactive demo registry and round out Patterns with browsing, tags, and TOC across multiple posts
+- [x] **Phase 2: Live Demos & Patterns Track** - Add the interactive demo registry and round out Patterns with browsing, tags, and TOC across multiple posts (completed 2026-07-02)
 - [ ] **Phase 3: Cross-Linking Infrastructure** - Build the frontmatter-driven, build-validated, many-to-many linking system that ties Blueprints and Patterns together
 - [ ] **Phase 4: Blueprints Track** - Ship the production-design Blueprints track, cross-linked to the Patterns it's composed of, with demos where feasible
 
@@ -62,7 +62,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A visitor reading a long post can jump to any heading via a table of contents with anchor links
   4. Multiple Pattern posts are live, each independently following the structural template from Phase 1, spanning more than one category (e.g. a UI component, a behaviour, an engineering technique)
 
-**Plans**: 3 plans
+**Plans**: 3/3 plans complete
+
+- [x] 02-01-PLAN.md
+- [x] 02-02-PLAN.md
+- [x] 02-03-PLAN.md
 
 - Wave 1 *(all three plans are independent — zero file overlap — and run in parallel)*:
   - [ ] [02-01](.planning/phases/02-live-demos-patterns-track/02-01-PLAN.md) — Optimistic Updates live demo (useOptimistic + rollback) + new Behaviours Pattern post (PATT-02)
@@ -108,6 +112,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & First Pattern Post | 3/3 | Complete    | 2026-06-30 |
-| 2. Live Demos & Patterns Track | 0/3 | Not started | - |
+| 2. Live Demos & Patterns Track | 3/3 | Complete   | 2026-07-02 |
 | 3. Cross-Linking Infrastructure | 0/TBD | Not started | - |
 | 4. Blueprints Track | 0/TBD | Not started | - |
