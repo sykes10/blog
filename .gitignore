@@ -41,3 +41,4 @@ next-env.d.ts
 # Velite generated output
 .velite/
 test-results/
+.env*
