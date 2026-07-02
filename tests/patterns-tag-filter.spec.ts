@@ -18,8 +18,12 @@
  */
 import { test, expect } from "@playwright/test";
 
-// "accessibility" is a tag on the seeded Toast post (see content/patterns/toast-notification-system.mdx).
-const SEEDED_TAG = "accessibility";
+// "notifications" is a tag exclusive to the seeded Toast post (see
+// content/patterns/toast-notification-system.mdx). The Optimistic Updates
+// post (content/patterns/optimistic-updates.mdx) shares "accessibility" and
+// "state-management" with Toast, so those tags can't narrow the list once
+// both posts exist post-merge — "notifications" is the tag that can.
+const SEEDED_TAG = "notifications";
 
 test.describe("Tag filter (PATT-04)", () => {
   test("clicking a tag chip filters the /patterns list and sets aria-pressed", async ({

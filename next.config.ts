@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 // Turbopack-safe Velite wiring (pattern from velite.js.org/guide/with-nextjs)
@@ -18,6 +19,9 @@ const isBuild = process.argv.includes("build");
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  turbopack: {
+    root: path.join(__dirname),
+  },
 };
 
 export default nextConfig;
