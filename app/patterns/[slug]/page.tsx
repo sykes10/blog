@@ -7,6 +7,8 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import { getAllPatterns, getPatternBySlug } from "@/lib/content";
 import { getMDXComponents } from "@/lib/mdx-components";
+import { extractHeadings } from "@/lib/toc";
+import { TableOfContents } from "@/components/mdx/TableOfContents";
 
 // MDX plugin chain: remark-gfm → rehype-slug → rehype-autolink-headings → rehype-pretty-code+Shiki
 // rehype-slug MUST come before rehype-autolink-headings (autolink depends on slug's id attrs).
@@ -103,6 +105,12 @@ export default async function PatternPage({
   // Both live in a Server Component context; no client/server boundary is crossed.
   const mdxComponents = getMDXComponents();
 
+  // SITE-04: heading list for the table of contents. Extracted from the raw MDX
+  // (not the rendered tree) so it can be computed server-side and handed to the
+  // client TOC island; ids are guaranteed to match rehype-slug's rendered ids
+  // because both derive from github-slugger (see lib/toc.ts).
+  const headings = extractHeadings(post.raw);
+
   return (
     <>
       {/* JSON-LD injected server-side; no user data interpolated (T-01-03 threat: accepted). */}
@@ -137,6 +145,10 @@ export default async function PatternPage({
             </div>
           )}
         </header>
+
+        {/* SITE-04: table of contents — inline above the article body, ahead of the
+            prose so it reads naturally as the post's outline before the content. */}
+        <TableOfContents headings={headings} />
 
         {/* MDX body — prose dark:prose-invert applies @tailwindcss/typography styles.
             MDXRemote from next-mdx-remote/rsc compiles raw MDX server-side as an async
