@@ -89,6 +89,7 @@ None yet.
 | 260701-w7q | Fix two remaining em dashes in app/layout.tsx per WRITING-STYLE.md | 2026-07-01 | 77d0313 | [260701-w7q-fix-two-remaining-em-dashes-in-app-layou](./quick/260701-w7q-fix-two-remaining-em-dashes-in-app-layou/) |
 | 260701-was | Fix two remaining em dashes in app/patterns/page.tsx per WRITING-STYLE.md | 2026-07-01 | fb1329f | [260701-was-fix-two-remaining-em-dashes-in-app-patte](./quick/260701-was-fix-two-remaining-em-dashes-in-app-patte/) |
 | 260701-wgo | Add colon-as-dash and plain-word rules to WRITING-STYLE.md, rewrite toast-notification-system.mdx prose to comply | 2026-07-01 | 35b2f68 | [260701-wgo-rewrite-toast-notification-system-blog-p](./quick/260701-wgo-rewrite-toast-notification-system-blog-p/) |
+| 260702-os6 | Add a host-based redirect in next.config.ts so www.frontendspec.dev permanently redirects to the apex frontendspec.dev, preserving path, using Next.js redirects() with a host has-matcher | 2026-07-02 | 94cfaf9 | [260702-os6-add-a-host-based-redirect-in-next-config](./quick/260702-os6-add-a-host-based-redirect-in-next-config/) |
 
 ## Deferred Items
 
@@ -106,4 +107,4 @@ Items acknowledged and carried forward from previous milestone close:
 Last session: 2026-07-01T22:30:14.448Z
 Stopped at: Phase 2 context gathered
 Resume file: .planning/phases/02-live-demos-patterns-track/02-CONTEXT.md
-Last activity: 2026-07-02
+Last activity: 2026-07-02 - Completed quick task 260702-os6: Add a host-based redirect in next.config.ts so www.frontendspec.dev permanently redirects to the apex frontendspec.dev
